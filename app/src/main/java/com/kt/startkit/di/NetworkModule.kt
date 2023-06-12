@@ -73,5 +73,5 @@ object NetworkModule {
 
     @Provides
     @BaseUrl
-    fun provideBaseUrl(): String = "https://api.example.com"r
+    fun provideBaseUrl(): String = "https://api.example.com"
 }

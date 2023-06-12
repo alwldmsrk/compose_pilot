@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".di.StartKitApplication"
@@ -18,25 +18,29 @@
         <activity
             android:name=".ui.features.start.StartActivity"
             android:exported="true"
-            android:theme="@style/Theme.StartKit.Splash">
-        </activity>
+            android:theme="@style/Theme.StartKit.Splash"></activity>
 
         <activity
             android:name=".ui.features.main.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.StartKit"
-            android:windowSoftInputMode="adjustResize">
-        </activity>
+            android:windowSoftInputMode="adjustResize"></activity>
 
-        <activity android:name=".ui.navigator.ComposableActivity"
-            android:theme="@style/Theme.StartKit"
-            android:exported="true">
+        <activity
+            android:name=".ui.navigator.ComposableActivity"
+            android:exported="true"
+            android:theme="@style/Theme.StartKit">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCMG6s7sXVACP5FMOf3FWulEQZWBQz1CpA" />
+
     </application>
 
 </manifest>
