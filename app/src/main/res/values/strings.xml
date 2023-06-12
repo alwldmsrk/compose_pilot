@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">StartKit</string>
+
+    <string name="home">home</string>
+    <string name="setting">setting</string>
+
+
+    <string name="profile">회원정보</string>
+</resources>
