@@ -1,4 +1,4 @@
-package com.kt.startkit.ui.features.main.home
+package com.kt.startkit.ui.features.main.map
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
