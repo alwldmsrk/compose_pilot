@@ -20,6 +20,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.kt.startkit.domain.entity.Item
 
 @Composable
@@ -40,7 +46,22 @@ fun HomeScreen(
         }
 
         is HomeViewState.Data -> {
-            HomeContentView((state as HomeViewState.Data).items)
+//            HomeContentView((state as HomeViewState.Data).items)
+            /** Add Google map Sample */
+            val singapore = LatLng(1.35, 103.87)
+            val cameraPositionState = rememberCameraPositionState {
+                position = CameraPosition.fromLatLngZoom(singapore, 10f)
+            }
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState
+            ) {
+                Marker(
+                    state = MarkerState(position = singapore),
+                    title = "Singapore",
+                    snippet = "Marker in Singapore"
+                )
+            }
         }
 
         is HomeViewState.Error -> {
