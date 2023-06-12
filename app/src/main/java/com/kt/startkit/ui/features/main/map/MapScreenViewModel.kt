@@ -1,4 +1,4 @@
-package com.kt.startkit.ui.features.main.home
+package com.kt.startkit.ui.features.main.map
 
 import androidx.lifecycle.viewModelScope
 import com.kt.startkit.core.base.StateViewModel
@@ -9,9 +9,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(
+class MapScreenViewModel @Inject constructor(
     private val usecase: ItemUsecase
-) : StateViewModel<HomeViewState>(initialState = HomeViewState.Initial) {
+) : StateViewModel<MapViewState>(initialState = MapViewState.Initial) {
 
 //    override fun setInitialState(): HomeViewState {
 //        return HomeViewState.Initial
@@ -19,14 +19,14 @@ class HomeScreenViewModel @Inject constructor(
 
     fun fetchInitialData() {
         viewModelScope.launch {
-            updateState { HomeViewState.Loading }
+            updateState { MapViewState.Loading }
             delay(1000)
 
             try {
                 val items = usecase.getItems()
-                updateState { HomeViewState.Data(items) }
+                updateState { MapViewState.Data(items) }
             } catch (e: Exception) {
-                updateState { HomeViewState.Error("Unknown error") }
+                updateState { MapViewState.Error("Unknown error") }
             }
         }
     }

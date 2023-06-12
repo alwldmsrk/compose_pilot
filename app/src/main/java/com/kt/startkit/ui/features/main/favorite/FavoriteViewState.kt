@@ -1,9 +1,9 @@
-package com.kt.startkit.ui.features.main.setting
+package com.kt.startkit.ui.features.main.favorite
 
 import com.kt.startkit.core.base.ViewState
 
-sealed class SettingViewState : ViewState() {
-    object Initial : SettingViewState()
-    object Success : SettingViewState()
-    data class Error(val message: String) : SettingViewState()
+sealed class FavoriteViewState : ViewState() {
+    object Initial : FavoriteViewState()
+    object Success : FavoriteViewState()
+    data class Error(val message: String) : FavoriteViewState()
 }

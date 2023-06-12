@@ -1,8 +1,7 @@
-package com.kt.startkit.ui.features.main.setting.notice
+package com.kt.startkit.ui.features.main.favorite.notice
 
 import androidx.lifecycle.ViewModel
 import com.kt.startkit.domain.usecase.ItemUsecase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 //@HiltViewModel

@@ -29,23 +29,23 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.kt.startkit.domain.entity.Item
 
 @Composable
-fun HomeScreen(
-    viewModel: HomeScreenViewModel = hiltViewModel(),
+fun MapScreen(
+    viewModel: MapScreenViewModel = hiltViewModel(),
 ) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
 //    val state by viewModel.state.collectAsState()
 
     when (state) {
-        is HomeViewState.Initial -> {
+        is MapViewState.Initial -> {
             viewModel.fetchInitialData()
         }
-        is HomeViewState.Loading -> {
+        is MapViewState.Loading -> {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
 
-        is HomeViewState.Data -> {
+        is MapViewState.Data -> {
 //            HomeContentView((state as HomeViewState.Data).items)
             /** Add Google map Sample */
             val singapore = LatLng(1.35, 103.87)
@@ -64,10 +64,10 @@ fun HomeScreen(
             }
         }
 
-        is HomeViewState.Error -> {
+        is MapViewState.Error -> {
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    (state as HomeViewState.Error).message,
+                    (state as MapViewState.Error).message,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
