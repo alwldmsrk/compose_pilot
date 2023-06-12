@@ -23,11 +23,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kt.startkit.R
 import com.kt.startkit.ui.features.main.LocalNavigationProvider
 import com.kt.startkit.ui.features.main.root.NavigationRoute
-import com.kt.startkit.ui.features.main.root.navigateToSettingItem
+import com.kt.startkit.ui.features.main.root.navigateToFavoriteItem
 
 
 @Composable
-fun SettingScreen(
+fun FavoriteScreen(
     modifier: Modifier = Modifier,
     onItemClick: (String) -> Unit,
     viewModel: FavoriteScreenViewModel = hiltViewModel(),
@@ -70,7 +70,7 @@ private fun ProfileView(
             title = "이름",
             value = "우당탕탕",
             onClick = {
-                navController.navigateToSettingItem(NavigationRoute.SETTING_PROFILE_NAME.routeName)
+                navController.navigateToFavoriteItem(NavigationRoute.FAVORITE.routeName)
             }
 //            onClick = {
 //                onItemClick(NavigationRoute.SETTING_PROFILE_NAME.routeName)

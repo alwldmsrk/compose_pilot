@@ -23,13 +23,13 @@ enum class RootTapBarItem(
         selectedIcon = IconRes.DrawableResourceIcon(IconResId.map),
         unselectedIcon = IconRes.DrawableResourceIcon(IconResId.mapUnselected),
         titleResId = R.string.map,
-        route = NavigationRoute.HOME,
+        route = NavigationRoute.MAP,
     ),
     FAVORITE(
         selectedIcon = IconRes.DrawableResourceIcon(IconResId.favorite),
         unselectedIcon = IconRes.DrawableResourceIcon(IconResId.favoriteUnselected),
         titleResId = R.string.favorite,
-        route = NavigationRoute.SETTING_GRAPH
+        route = NavigationRoute.FAVORITE
     );
 
     companion object {
