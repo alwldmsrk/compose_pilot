@@ -19,16 +19,16 @@ enum class RootTapBarItem(
     val titleResId: Int,
     val route: NavigationRoute
 ) {
-    HOME(
-        selectedIcon = IconRes.DrawableResourceIcon(IconResId.home),
-        unselectedIcon = IconRes.DrawableResourceIcon(IconResId.home),
-        titleResId = R.string.home,
+    MAP(
+        selectedIcon = IconRes.DrawableResourceIcon(IconResId.map),
+        unselectedIcon = IconRes.DrawableResourceIcon(IconResId.mapUnselected),
+        titleResId = R.string.map,
         route = NavigationRoute.HOME,
     ),
-    SETTING(
-        selectedIcon = IconRes.DrawableResourceIcon(IconResId.home),
-        unselectedIcon = IconRes.DrawableResourceIcon(IconResId.home),
-        titleResId = R.string.setting,
+    FAVORITE(
+        selectedIcon = IconRes.DrawableResourceIcon(IconResId.favorite),
+        unselectedIcon = IconRes.DrawableResourceIcon(IconResId.favoriteUnselected),
+        titleResId = R.string.favorite,
         route = NavigationRoute.SETTING_GRAPH
     );
 

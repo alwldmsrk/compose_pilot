@@ -8,9 +8,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.kt.startkit.ui.features.main.LocalNavigationProvider
-import com.kt.startkit.ui.features.main.home.HomeScreen
-import com.kt.startkit.ui.features.main.setting.SettingScreen
-import com.kt.startkit.ui.features.main.setting.notice.NoticeScreen
+
+import com.kt.startkit.ui.features.main.favorite.SettingScreen
+import com.kt.startkit.ui.features.main.favorite.notice.NoticeScreen
+import com.kt.startkit.ui.features.main.map.MapScreen
 
 enum class NavigationRoute(val routeName: String) {
     HOME("/home_screen"),
@@ -47,7 +48,7 @@ fun NavGraphBuilder.homeScreen() {
     composable(
         route = NavigationRoute.HOME.routeName,
     ) {
-        HomeScreen()
+        MapScreen()
     }
 }
 

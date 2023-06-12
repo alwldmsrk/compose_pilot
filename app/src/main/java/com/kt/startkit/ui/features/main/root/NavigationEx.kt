@@ -16,8 +16,8 @@ fun NavHostController.currentDestinationAsState(): NavDestination? =
 fun NavHostController.currentRootTapBarItem(): RootTapBarItem? {
 //    return when (currentDestination?.route) {
     return when (currentDestinationAsState()?.route) {
-        NavigationRoute.HOME.routeName -> RootTapBarItem.HOME
-        NavigationRoute.SETTING.routeName -> RootTapBarItem.SETTING
+        NavigationRoute.HOME.routeName -> RootTapBarItem.MAP
+        NavigationRoute.SETTING.routeName -> RootTapBarItem.FAVORITE
         else -> null
     }
 }
