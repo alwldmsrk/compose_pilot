@@ -6,19 +6,16 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.kt.startkit.ui.features.main.LocalNavigationProvider
-
-import com.kt.startkit.ui.features.main.favorite.SettingScreen
-import com.kt.startkit.ui.features.main.favorite.notice.NoticeScreen
+import com.kt.startkit.ui.features.main.favorite.FavoriteScreen
 import com.kt.startkit.ui.features.main.map.MapScreen
 
 enum class NavigationRoute(val routeName: String) {
-    HOME("/home_screen"),
+    MAP("/map_screen"),
 
-    SETTING_GRAPH("/setting"),
-    SETTING("/setting/root"),
-    SETTING_PROFILE_NAME("/setting/profile_name")
+    //    SETTING_GRAPH("/setting"),
+    FAVORITE("/favorite"),
+//    SETTING_PROFILE_NAME("/setting/profile_name")
 }
 
 @Composable
@@ -27,65 +24,84 @@ fun RootNavHost() {
 
     NavHost(
         navController = navController,
-        startDestination = NavigationRoute.HOME.routeName,
+        startDestination = NavigationRoute.MAP.routeName,
     ) {
-        homeScreen()
-        settingGraph(navController = navController)
+        mapScreen()
+        favoriteScreen(navController = navController)
+    }
+}
+
+fun NavGraphBuilder.mapScreen() {
+    composable(
+        route = NavigationRoute.MAP.routeName,
+    ) {
+        MapScreen()
+    }
+}
+
+fun NavGraphBuilder.favoriteScreen(navController: NavController) {
+    composable(
+        route = NavigationRoute.FAVORITE.routeName,
+    ) {
+        FavoriteScreen(
+            onItemClick = { route ->
+                navController.navigateToFavoriteItem(route)
+            },
+        )
     }
 }
 
 
-/// HomeScreen
-fun NavController.navigateToHome(navOptions: NavOptions? = null) {
-    navigate(NavigationRoute.HOME.routeName, navOptions)
+/**
+ * map Screen 으로 이동 (Default)
+ */
+fun NavController.navigateToMap(navOptions: NavOptions? = null) {
+    navigate(NavigationRoute.MAP.routeName, navOptions)
 
     backQueue.lastOrNull()?.arguments?.apply {
         putString("name", "who a u?")
     }
 }
 
-fun NavGraphBuilder.homeScreen() {
-    composable(
-        route = NavigationRoute.HOME.routeName,
-    ) {
-        MapScreen()
-    }
+/**
+ * Favorite Screen 으로 이동 (Default)
+ */
+fun NavController.navigateToFavorite(navOptions: NavOptions? = null) {
+    navigate(NavigationRoute.FAVORITE.routeName, navOptions)
 }
 
-/// SettingScreen
-fun NavController.navigateToSetting(navOptions: NavOptions? = null) {
-    navigate(NavigationRoute.SETTING_GRAPH.routeName, navOptions)
-}
-
-fun NavGraphBuilder.settingGraph(
-    navController: NavController,
-) {
-    navigation(
-        route = NavigationRoute.SETTING_GRAPH.routeName,
-        startDestination = NavigationRoute.SETTING.routeName,
-    ) {
-
-        composable(route = NavigationRoute.SETTING.routeName) {
-            SettingScreen(
-                onItemClick = { route ->
-                    navController.navigateToSettingItem(route)
-                },
-            )
-        }
-        composable(route = NavigationRoute.SETTING_PROFILE_NAME.routeName) {
-            NoticeScreen(
-                onBackClick = navController::popBackStack
-            )
-        }
-    }
-}
-
-fun NavController.navigateToSettingItem(route: String) {
+fun NavController.navigateToFavoriteItem(route: String) {
 //    val encodedId = Uri.encode(itemId)
 //    this.navigate("topic_route/$encodedId")
 //    this.navigate("setting/$itemId")
     this.navigate(route)
 }
+
+
+//
+//fun NavGraphBuilder.settingGraph(
+//    navController: NavController,
+//) {
+//    navigation(
+//        route = NavigationRoute.FAVORITE.routeName,
+//        startDestination = NavigationRoute.FAVORITE.routeName,
+//    ) {
+//
+//        composable(route = NavigationRoute.FAVORITE.routeName) {
+//            FavoriteScreen(
+//                onItemClick = { route ->
+//                    navController.navigateToFavoriteItem(route)
+//                },
+//            )
+//        }
+////        composable(route = NavigationRoute.FAVORITE.routeName) {
+////            NoticeScreen(
+////                onBackClick = navController::popBackStack
+////            )
+////        }
+//    }
+//}
+
 
 //fun NavGraphBuilder.settingItemScreen(
 //    onBackClick: () -> Unit,

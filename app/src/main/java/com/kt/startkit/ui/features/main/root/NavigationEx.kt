@@ -16,8 +16,8 @@ fun NavHostController.currentDestinationAsState(): NavDestination? =
 fun NavHostController.currentRootTapBarItem(): RootTapBarItem? {
 //    return when (currentDestination?.route) {
     return when (currentDestinationAsState()?.route) {
-        NavigationRoute.HOME.routeName -> RootTapBarItem.MAP
-        NavigationRoute.SETTING.routeName -> RootTapBarItem.FAVORITE
+        NavigationRoute.MAP.routeName -> RootTapBarItem.MAP
+        NavigationRoute.FAVORITE.routeName -> RootTapBarItem.FAVORITE
         else -> null
     }
 }
@@ -39,8 +39,8 @@ fun NavHostController.navigateToMainTap(route: NavigationRoute) {
     }
 
     when (route) {
-        NavigationRoute.HOME -> navigateToHome(topLevelNavOptions)
-        NavigationRoute.SETTING_GRAPH -> navigateToSetting(topLevelNavOptions)
+        NavigationRoute.MAP -> navigateToMap(topLevelNavOptions)
+        NavigationRoute.FAVORITE -> navigateToFavorite(topLevelNavOptions)
         else -> {} // main tap 외의 route 는 무시한다.
     }
 }
