@@ -17,6 +17,11 @@ object PermissionUtil {
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
 
+    val locationPermissions = listOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+    )
+
     fun isAllPermissionsGranted(activity: Activity): Boolean {
         for(permission in permissions) {
             if(!hasPermission(activity, permission)) {
