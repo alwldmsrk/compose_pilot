@@ -12,7 +12,7 @@ class SearchPlaceUseCase @Inject constructor(
     private val repository: PlaceRepository
 ) : Usecase {
 
-    suspend fun getPlaces(): List<PlaceData> {
-       return repository.getPlaces()
+    suspend fun getPlaces(query: String): List<PlaceData> {
+       return repository.getPlaces(query)
     }
 }

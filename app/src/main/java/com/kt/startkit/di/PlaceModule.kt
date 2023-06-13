@@ -1,6 +1,5 @@
 package com.kt.startkit.di
 
-import com.kt.startkit.core.datastore.PreferenceDataStore
 import com.kt.startkit.data.ApiService
 import com.kt.startkit.data.datasource.PlaceDataSource
 import com.kt.startkit.domain.mapper.PlaceDomainMapper
@@ -10,8 +9,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import kotlinx.coroutines.CoroutineDispatcher
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)

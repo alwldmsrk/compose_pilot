@@ -9,8 +9,8 @@ import javax.inject.Inject
 class PlaceDataSource @Inject constructor(
     private val placeApiService: ApiService
 ): DataSource {
-    override suspend fun getPlaces(): PlaceResponse{
-        return placeApiService.getPlaces("","",10,10)
+    override suspend fun getPlaces(query: String): PlaceResponse {
+        return placeApiService.getPlaces(query)
 
     }
 
