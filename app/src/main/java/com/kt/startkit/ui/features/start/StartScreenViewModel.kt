@@ -3,7 +3,6 @@ package com.kt.startkit.ui.features.start
 import androidx.lifecycle.viewModelScope
 import com.kt.startkit.core.base.StateViewModel
 import com.kt.startkit.core.logger.Logger
-import com.kt.startkit.domain.repository.UserProfileRepository
 import com.kt.startkit.domain.usecase.LoginUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitCancellation
@@ -13,8 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StartScreenViewModel @Inject constructor(
-    private val loginUseCase: LoginUsecase,
-    private val userProfileRepository: UserProfileRepository,
+    private val loginUseCase: LoginUsecase
 ) : StateViewModel<StartScreenState>(initialState = StartScreenState.Loading) {
 
     fun fetchInitialData(needPermissionCheck: Boolean = false) {
@@ -32,7 +30,7 @@ class StartScreenViewModel @Inject constructor(
                 }
 
                 if (canAutoLogin()) {
-                    userProfileRepository.fetchProfile()
+
                     updateState {
                         StartScreenState.NavigateToMain(bannerPolicy = false)
                     }
