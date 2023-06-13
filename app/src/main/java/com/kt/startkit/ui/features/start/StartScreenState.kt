@@ -1,6 +1,7 @@
 package com.kt.startkit.ui.features.start
 
 import com.kt.startkit.core.base.ViewState
+import kotlinx.coroutines.Job
 
 
 // State Hierarchy
@@ -18,6 +19,8 @@ sealed class StartScreenState : ViewState() {
     object Loading : StartScreenState()
     object FailToInitialize : StartScreenState()
     object ShouldAppUpdate : StartScreenState()
+
+    object CheckPermission : StartScreenState()
 
     abstract class Success : StartScreenState()
 
