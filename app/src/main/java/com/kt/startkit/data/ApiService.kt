@@ -1,6 +1,7 @@
 package com.kt.startkit.data
 
 import com.kt.startkit.data.model.PlaceResponse
+import kotlinx.coroutines.flow.MutableStateFlow
 import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.*
@@ -8,12 +9,13 @@ import retrofit2.http.*
 interface ApiService {
 
     @Headers("Authorization: $API_AUTHORIZATION_PREFIX $API_ACCESS_KEY")
-    @GET("v2/local/search/keyword/.${Character.FORMAT}")
+    @GET("v2/local/search/keyword.JSON")
     suspend fun getPlaces(
         @Query("query") query: String,
-        @Query("sort") sort: String = DEFAULT_SORT,
-        @Query("page") page: Int = DEFAULT_PAGE,
-        @Query("size") size: Int = NETWORK_DEFAULT_SIZE
+//        @Query("sort") sort: String = DEFAULT_SORT,
+//        @Query("page") page: Int = DEFAULT_PAGE,
+//        @Query("size") size: Int = NETWORK_DEFAULT_SIZE,
+//        @Query("rect") rect: String,
     ) : PlaceResponse
 
     companion object {
