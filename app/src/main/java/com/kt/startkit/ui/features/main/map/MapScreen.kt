@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -48,18 +49,19 @@ fun MapScreen(
         is MapViewState.Data -> {
 //            HomeContentView((state as HomeViewState.Data).items)
             /** Add Google map Sample */
-            val singapore = LatLng(1.35, 103.87)
+            val yangjae = LatLng(37.484557, 127.034022)
             val cameraPositionState = rememberCameraPositionState {
-                position = CameraPosition.fromLatLngZoom(singapore, 10f)
+                position = CameraPosition.fromLatLngZoom(yangjae, 13f)
             }
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState
+                cameraPositionState = cameraPositionState,
+                properties = MapProperties(isMyLocationEnabled = false)
             ) {
                 Marker(
-                    state = MarkerState(position = singapore),
-                    title = "Singapore",
-                    snippet = "Marker in Singapore"
+                    state = MarkerState(position = yangjae),
+                    title = "Yangjae",
+                    snippet = "Marker in Yangjae"
                 )
             }
         }

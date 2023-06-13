@@ -1,6 +1,8 @@
 package com.kt.startkit.ui.features.start
 
+import android.Manifest
 import android.app.Activity
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
@@ -12,21 +14,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import com.kt.startkit.core.base.StateViewModelListener
 import com.kt.startkit.core.logger.Logger
+import com.kt.startkit.core.permission.PermissionUtil
 import com.kt.startkit.ui.features.main.LocalNavigationProvider
 import com.kt.startkit.ui.navigator.AppNavigationRoute
 import com.kt.startkit.ui.navigator.navigate
+import kotlinx.coroutines.delay
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @NonRestartableComposable
 @Composable
 fun StartScreen(screenViewModel: StartScreenViewModel = hiltViewModel()) {
     val activity = (LocalContext.current as? Activity)
     val navController = LocalNavigationProvider.current
 
+    val locationPermissionState = rememberMultiplePermissionsState(permissions = PermissionUtil.permissions) {
+        screenViewModel.fetchInitialData(needPermissionCheck = false)
+    }
+
     LaunchedEffect(key1 = "", block = {
-        screenViewModel.fetchInitialData()
+        screenViewModel.fetchInitialData(needPermissionCheck = activity?.let { !PermissionUtil.isAllPermissionsGranted(it) } ?: false)
     })
 
     StateViewModelListener(stateViewModel = screenViewModel, listen = {
@@ -56,14 +68,15 @@ fun StartScreen(screenViewModel: StartScreenViewModel = hiltViewModel()) {
                 // TODO: show onboarding activity
                 activity?.finish()
             }
+            is StartScreenState.CheckPermission -> {
+                locationPermissionState.launchMultiplePermissionRequest()
+            }
             else -> {}
         }
     })
 
     StartScreenCompose()
 }
-
-
 
 @Composable
 fun StartScreenCompose() {
