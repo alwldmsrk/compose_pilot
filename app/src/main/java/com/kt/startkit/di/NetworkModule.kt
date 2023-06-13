@@ -1,13 +1,11 @@
 package com.kt.startkit.di
 
-import com.kt.startkit.BuildConfig
 import com.kt.startkit.data.ApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -24,14 +22,9 @@ annotation class BaseUrl
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-//    @Provides
-//    fun provideRetrofit(): ApiService {
-//        return Retrofit.Builder()
-//            .baseUrl(ApiService.BASE_URL)
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//            .create(ApiService::class.java)
-//    }
+    @Provides
+    @BaseUrl
+    fun provideBaseUrl(): String = "https://dapi.kakao.com"
 
     @Singleton
     @Provides
@@ -44,6 +37,15 @@ object NetworkModule {
             .add(KotlinJsonAdapterFactory())
             .build()
     }
+
+    //    @Provides
+//    fun provideRetrofit(): ApiService {
+//        return Retrofit.Builder()
+//            .baseUrl(ApiService.BASE_URL)
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .build()
+//            .create(ApiService::class.java)
+//    }
 
     @Provides
     fun provideRetrofit(
@@ -66,12 +68,10 @@ object NetworkModule {
             .writeTimeout(10, TimeUnit.SECONDS)
             .addInterceptor(
                 HttpLoggingInterceptor()
-                    .apply { level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE }
+                    .apply { HttpLoggingInterceptor.Level.BODY }
             )
             .build()
     }
 
-    @Provides
-    @BaseUrl
-    fun provideBaseUrl(): String = "https://api.example.com"
+
 }
