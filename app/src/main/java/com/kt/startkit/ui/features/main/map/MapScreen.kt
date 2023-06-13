@@ -64,7 +64,7 @@ fun MapScreen(
                     GoogleMapScreen(data = state as MapViewState.Data)
                     SearchTextField {
                         with(viewModel) {
-                            sendUiAction(UiAction.Search)
+                            sendUiAction(UiAction.SearchPlace)
                         }
                     }
                 }

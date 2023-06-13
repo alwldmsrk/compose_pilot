@@ -41,7 +41,8 @@ class UserProfileRepository(
         }
     }
 
-    override suspend fun getPlaces(query: String): List<PlaceData> {
+
+    override suspend fun getPlaces(query: String, rect: String): List<PlaceData> {
         TODO("Not yet implemented")
     }
 }

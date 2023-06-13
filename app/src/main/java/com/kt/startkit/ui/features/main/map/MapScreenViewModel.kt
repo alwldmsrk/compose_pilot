@@ -7,7 +7,9 @@ import com.kt.startkit.domain.entity.FavoriteData
 import com.kt.startkit.domain.entity.PlaceData
 import com.kt.startkit.domain.usecase.FavoriteUseCase
 import com.kt.startkit.domain.usecase.ItemUsecase
+import com.kt.startkit.core.logger.Logger
 import com.kt.startkit.domain.usecase.SearchPlaceUseCase
+import com.kt.startkit.ui.features.main.map.MapScreenViewModel.CameraRect.Companion.from
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,12 +73,35 @@ class MapScreenViewModel @Inject constructor(
         _searchText.value = textState
     }
 
+
+    /**
+     * Composable에서 발생한 UiEvent를 ViewModel로 전달하기 위한 메서드
+     */
+    fun sendUiAction(event: UiAction) {
+        when (event) {
+            is UiAction.CameraChange -> {
+                currentRect = CameraRect(event.left, event.top, event.right, event.bottom)
+            }
+
+            is UiAction.SearchPlace -> {
+                requestSearchPlace(true)
+            }
+        }
+    }
+
     /**
      * 장소 검색 호출
      */
-    private fun requestItems(isInitial: Boolean = false) {
+    private fun requestSearchPlace(isInitial: Boolean = false) {
         viewModelScope.launch {
             try {
+                Logger.d(currentRect.toString())
+
+                if(currentRect != null){
+                    val images = placeUseCase.getPlaces(query = searchText, rect = from(currentRect!!))
+                    updateState { MapViewState.Data(images) }
+                }
+
                 val images = placeUseCase.getPlaces(query = searchText)
                 updateState { MapViewState.Data(images, emptyList()) }
             } catch (e: Exception) {
@@ -85,6 +110,17 @@ class MapScreenViewModel @Inject constructor(
         }
     }
 
+    data class CameraRect(
+        val left: Double,
+        val top: Double,
+        val right: Double,
+        val bottom: Double
+    ) {
+        companion object {
+            fun from(currentRect: CameraRect): String {
+                return with(currentRect) {
+                    "$left,$top,$right,$bottom"
+                }
     /**
      * Composable에서 발생한 UiEvent를 ViewModel로 전달하기 위한 메서드
      */
@@ -99,14 +135,18 @@ class MapScreenViewModel @Inject constructor(
             }
         }
     }
-
-    data class CameraRect(val left: Double, val top: Double, val right: Double, val bottom: Double)
 }
 
 /**
  * Composable로부터 전달 받을 UiAction의 규격 정의
  */
 sealed class UiAction {
-    data class CameraChange(val left: Double, val top: Double, val right: Double, val bottom: Double) : UiAction()
-    object Search : UiAction()
+    data class CameraChange(
+        val left: Double,
+        val top: Double,
+        val right: Double,
+        val bottom: Double
+    ) : UiAction()
+
+    object SearchPlace : UiAction()
 }
