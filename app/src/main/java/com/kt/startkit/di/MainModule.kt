@@ -23,4 +23,16 @@ object MainModule {
             dispatcher = dispatcher
         )
     }
+
+//    @Singleton
+//    @Provides
+//    fun providePlaceRepository(
+//        preferences: PreferenceDataStore,
+//        @AppDispatchers(AppCoroutineDispatchers.IO) dispatcher: CoroutineDispatcher,
+//    ): UserProfileRepository {
+//        return UserProfileRepository(
+//            preferences = preferences,
+//            dispatcher = dispatcher
+//        )
+//    }
 }

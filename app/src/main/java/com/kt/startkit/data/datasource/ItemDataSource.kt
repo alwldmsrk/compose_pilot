@@ -2,6 +2,7 @@ package com.kt.startkit.data.datasource
 
 import com.kt.startkit.data.ApiService
 import com.kt.startkit.data.model.ItemModel
+import com.kt.startkit.data.model.PlaceResponse
 import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
@@ -16,5 +17,9 @@ class ItemDataSource @Inject constructor(
             ItemModel("000001", "apple", 3000, 100, "fruits"),
             ItemModel("000002", "banana", 1000, 300, "fruits"),
         )
+    }
+
+    override suspend fun getPlaces(): PlaceResponse {
+        TODO("Not yet implemented")
     }
 }

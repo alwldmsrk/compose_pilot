@@ -13,7 +13,7 @@ class MapScreenViewModel @Inject constructor(
     private val usecase: ItemUsecase
 ) : StateViewModel<MapViewState>(initialState = MapViewState.Initial) {
 
-//    override fun setInitialState(): HomeViewState {
+//    fun setInitialState(): HomeViewState {
 //        return HomeViewState.Initial
 //    }
 

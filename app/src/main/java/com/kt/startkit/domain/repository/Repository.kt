@@ -1,3 +1,7 @@
 package com.kt.startkit.domain.repository
 
-interface Repository
+import com.kt.startkit.domain.entity.PlaceData
+
+interface Repository {
+    suspend fun getPlaces(): List<PlaceData>
+}

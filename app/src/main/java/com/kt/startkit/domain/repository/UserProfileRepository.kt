@@ -1,6 +1,7 @@
 package com.kt.startkit.domain.repository
 
 import com.kt.startkit.core.datastore.PreferenceDataStore
+import com.kt.startkit.domain.entity.PlaceData
 import com.kt.startkit.domain.entity.UserProfile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -38,5 +39,9 @@ class UserProfileRepository(
         CoroutineScope(dispatcher + SupervisorJob()).launch {
             _profile.emit(null)
         }
+    }
+
+    override suspend fun getPlaces(): List<PlaceData> {
+        TODO("Not yet implemented")
     }
 }
