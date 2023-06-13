@@ -2,6 +2,7 @@ package com.kt.startkit.ui.features.main.map
 
 import androidx.lifecycle.viewModelScope
 import com.kt.startkit.core.base.StateViewModel
+import com.kt.startkit.core.logger.Logger
 import com.kt.startkit.domain.usecase.ItemUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -13,9 +14,7 @@ class MapScreenViewModel @Inject constructor(
     private val usecase: ItemUsecase
 ) : StateViewModel<MapViewState>(initialState = MapViewState.Initial) {
 
-//    fun setInitialState(): HomeViewState {
-//        return HomeViewState.Initial
-//    }
+    private var currentRect: CameraRect? = null
 
     fun fetchInitialData() {
         viewModelScope.launch {
@@ -30,4 +29,19 @@ class MapScreenViewModel @Inject constructor(
             }
         }
     }
+
+    fun occurUiEvent(event: UiEvent) {
+        when(event) {
+            is UiEvent.CameraChange -> {
+                currentRect = CameraRect(event.left, event.top, event.right, event.bottom)
+                Logger.i("camera Change occur : left : ${currentRect?.left}")
+            }
+        }
+    }
+
+    data class CameraRect(val left: Double, val top: Double, val right: Double, val bottom: Double)
+}
+
+sealed class UiEvent {
+    data class CameraChange(val left: Double, val top: Double, val right: Double, val bottom: Double) : UiEvent()
 }
