@@ -38,7 +38,7 @@ fun StartScreen(screenViewModel: StartScreenViewModel = hiltViewModel()) {
     }
 
     LaunchedEffect(key1 = "", block = {
-        screenViewModel.fetchInitialData(needPermissionCheck = activity?.let { PermissionUtil.isAllPermissionsGranted(it) } ?: false)
+        screenViewModel.fetchInitialData(needPermissionCheck = activity?.let { !PermissionUtil.isAllPermissionsGranted(it) } ?: false)
     })
 
     StateViewModelListener(stateViewModel = screenViewModel, listen = {
