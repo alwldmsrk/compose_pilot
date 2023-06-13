@@ -20,7 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import com.kt.startkit.R
-import com.kt.startkit.ui.features.main.favorite.component.ImageColumnContent
+import com.kt.startkit.ui.features.main.favorite.component.PlaceColumnContent
 import com.kt.startkit.ui.features.main.favorite.component.ResultDataItem
 
 
@@ -91,10 +91,10 @@ fun FavoriteList(
             ResultDataItem(
                 bookMarkIcon = R.drawable.outline_favorite_black_24,
                 onClickBookmark = {
-                        viewModel.sendUiAction(FavoriteScreenViewModel.UiAction.DeleteBookMark)
+                    viewModel.sendUiAction(FavoriteScreenViewModel.UiAction.DeleteBookMark)
                 },
                 columnContent = {
-                    ImageColumnContent(
+                    PlaceColumnContent(
                         title = it.name,
                         address = it.address
                     )
