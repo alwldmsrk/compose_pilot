@@ -12,7 +12,6 @@ import com.kt.startkit.domain.usecase.SearchPlaceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.logging.Logger
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,10 +58,9 @@ class MapScreenViewModel @Inject constructor(
 
     private fun requestItems(isInitial: Boolean = false) {
         viewModelScope.launch {
-
             try {
                 val images = placeUseCase.getPlaces(query = searchText)
-                com.kt.startkit.core.logger.Logger.d(images.get(0).toString(),"miji")
+                Logger.d(images.get(0).toString(),"miji")
             } catch (e: Exception) {
                 updateState { MapViewState.Error("Unknown error") }
             }
@@ -73,7 +71,6 @@ class MapScreenViewModel @Inject constructor(
         when(event) {
             is UiEvent.CameraChange -> {
                 currentRect = CameraRect(event.left, event.top, event.right, event.bottom)
-                Logger.i("camera Change occur : left : ${currentRect?.left}")
             }
         }
     }

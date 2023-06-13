@@ -167,15 +167,6 @@ private fun GoogleMapScreen(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         properties = MapProperties(isMyLocationEnabled = !isAllPermissionStateDenied(locationPermissionState.permissions)),
-        onMapClick = {
-            Logger.d("camera onMapClick  Lat : ${it.latitude}")
-            val rect = cameraPositionState.projection?.visibleRegion?.latLngBounds
-
-            Logger.i(
-                "cameraPosition state  left : ${rect?.southwest?.longitude} top : ${rect?.northeast?.latitude} " +
-                        "right : ${rect?.northeast?.longitude} bottom : ${rect?.southwest?.latitude}"
-            )
-        }
     ) {
         Marker(
             state = MarkerState(position = yangjae),
