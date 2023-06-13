@@ -95,8 +95,8 @@ class MapScreenViewModel @Inject constructor(
     private fun requestSearchPlace(isInitial: MapViewState) {
         viewModelScope.launch {
             try {
-                Logger.d(currentRect.toString())
-
+                // TODO 로딩 화면 추가
+                //updateState { MapViewState.Loading }
                 if (currentRect != null) {
                     val images =
                         placeUseCase.getPlaces(query = searchText, rect = from(currentRect!!))

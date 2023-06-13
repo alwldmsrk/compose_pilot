@@ -39,7 +39,7 @@ import com.kt.startkit.R
 import com.kt.startkit.core.logger.Logger
 import com.kt.startkit.core.permission.PermissionUtil
 import com.kt.startkit.domain.entity.PlaceData
-import com.kt.startkit.ui.features.main.map.search.PlaceSearchTextField
+import com.kt.startkit.ui.features.main.map.component.PlaceSearchTextField
 
 @Composable
 fun MapScreen(
