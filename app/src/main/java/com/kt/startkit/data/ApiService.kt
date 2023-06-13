@@ -36,7 +36,7 @@ private const val NETWORK_DEFAULT_SIZE = 30
 //    @Headers("Content-Type: application/json")
 //    @POST("users")
 //    suspend fun add(@Body user: UserBody): UserResponse
-
+//
 //    companion object {
 //        operator fun invoke(retrofit: Retrofit) = retrofit.create<ApiService>()
 //    }
