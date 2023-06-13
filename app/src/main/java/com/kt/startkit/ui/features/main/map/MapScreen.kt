@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -95,10 +96,12 @@ private fun SearchTextField(
     val textState = viewModel.searchText
     val keyboardController = LocalSoftwareKeyboardController.current
     PlaceSearchTextField(modifier = Modifier
+        .padding(top = 20.dp)
         .fillMaxWidth()
         .wrapContentHeight()
+        .padding(horizontal = 10.dp)
         .clip(RoundedCornerShape(15.dp))
-        .background(colorResource(R.color.purple_200)),
+        .background(colorResource(R.color.grey_50)),
         value = textState,
         onSearchKeyboardAction = {
             if (textState.isNotEmpty()) {
