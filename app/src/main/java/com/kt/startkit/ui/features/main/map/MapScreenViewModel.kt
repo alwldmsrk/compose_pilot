@@ -3,6 +3,7 @@ package com.kt.startkit.ui.features.main.map
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.kt.startkit.core.base.StateViewModel
+import com.kt.startkit.domain.usecase.FavoriteUseCase
 import com.kt.startkit.domain.usecase.ItemUsecase
 import com.kt.startkit.domain.usecase.SearchPlaceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MapScreenViewModel @Inject constructor(
     private val placeUseCase: SearchPlaceUseCase,
-    private val usecase: ItemUsecase
+    private val favoriteUseCase: FavoriteUseCase,
 ) : StateViewModel<MapViewState>(initialState = MapViewState.Initial) {
 
     /**
