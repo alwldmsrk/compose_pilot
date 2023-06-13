@@ -1,16 +1,11 @@
 package com.kt.startkit.ui.features.main.map
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.kt.startkit.core.base.StateViewModel
-import com.kt.startkit.data.ApiService
-import com.kt.startkit.domain.repository.PlaceRepository
-import com.kt.startkit.core.logger.Logger
 import com.kt.startkit.domain.usecase.ItemUsecase
 import com.kt.startkit.domain.usecase.SearchPlaceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,17 +22,13 @@ class MapScreenViewModel @Inject constructor(
     val searchText get() = _searchText.value
 
 
-
     private var currentRect: CameraRect? = null
 
     fun fetchInitialData() {
         viewModelScope.launch {
             updateState { MapViewState.Loading }
-            delay(1000)
-
             try {
-                val items = usecase.getItems()
-                updateState { MapViewState.Data(items) }
+                updateState { MapViewState.Data(emptyList()) }
             } catch (e: Exception) {
                 updateState { MapViewState.Error("Unknown error") }
             }
@@ -54,23 +45,27 @@ class MapScreenViewModel @Inject constructor(
     /**
      * 장소 검색 호출
      */
-    fun getSearchPlaces() = requestItems(true)
-
     private fun requestItems(isInitial: Boolean = false) {
         viewModelScope.launch {
             try {
                 val images = placeUseCase.getPlaces(query = searchText)
-                Logger.d(images.get(0).toString(),"miji")
+                updateState { MapViewState.Data(images) }
             } catch (e: Exception) {
                 updateState { MapViewState.Error("Unknown error") }
             }
         }
     }
 
-    fun occurUiEvent(event: UiEvent) {
+    /**
+     * Composable에서 발생한 UiEvent를 ViewModel로 전달하기 위한 메서드
+     */
+    fun sendUiAction(event: UiAction) {
         when(event) {
-            is UiEvent.CameraChange -> {
+            is UiAction.CameraChange -> {
                 currentRect = CameraRect(event.left, event.top, event.right, event.bottom)
+            }
+            is UiAction.Search -> {
+                requestItems(true)
             }
         }
     }
@@ -78,6 +73,10 @@ class MapScreenViewModel @Inject constructor(
     data class CameraRect(val left: Double, val top: Double, val right: Double, val bottom: Double)
 }
 
-sealed class UiEvent {
-    data class CameraChange(val left: Double, val top: Double, val right: Double, val bottom: Double) : UiEvent()
+/**
+ * Composable로부터 전달 받을 UiAction의 규격 정의
+ */
+sealed class UiAction {
+    data class CameraChange(val left: Double, val top: Double, val right: Double, val bottom: Double) : UiAction()
+    object Search : UiAction()
 }
