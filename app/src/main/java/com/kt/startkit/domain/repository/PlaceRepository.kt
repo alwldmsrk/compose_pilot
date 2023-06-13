@@ -14,8 +14,8 @@ class PlaceRepository @Inject constructor(
     private val domainMapper: PlaceDomainMapper,
 ) : Repository {
 
-    override suspend fun getPlaces(query: String): List<PlaceData> {
-        return dataSource.getPlaces(query).documents.map {
+    override suspend fun getPlaces(query: String, rect: String): List<PlaceData> {
+        return dataSource.getPlaces(query,rect).documents.map {
             domainMapper(it)
         }
     }

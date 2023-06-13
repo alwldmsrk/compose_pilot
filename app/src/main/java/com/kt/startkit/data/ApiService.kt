@@ -12,10 +12,7 @@ interface ApiService {
     @GET("v2/local/search/keyword.JSON")
     suspend fun getPlaces(
         @Query("query") query: String,
-//        @Query("sort") sort: String = DEFAULT_SORT,
-//        @Query("page") page: Int = DEFAULT_PAGE,
-//        @Query("size") size: Int = NETWORK_DEFAULT_SIZE,
-//        @Query("rect") rect: String,
+        @Query("rect") rect: String,
     ) : PlaceResponse
 
     companion object {
@@ -27,18 +24,3 @@ private const val API_ACCESS_KEY = "f3d2a2d15e3b8ac59748b35e5f38136a"
 private const val DEFAULT_SORT = "accuracy"
 private const val DEFAULT_PAGE = 1
 private const val NETWORK_DEFAULT_SIZE = 30
-
-
-//    @GET("users")
-//    suspend fun getUsers(): List<UserResponse>
-//
-//    @DELETE("users/{id}")
-//    suspend fun remove(@Path("id") userId: String): UserResponse
-//
-//    @Headers("Content-Type: application/json")
-//    @POST("users")
-//    suspend fun add(@Body user: UserBody): UserResponse
-//
-//    companion object {
-//        operator fun invoke(retrofit: Retrofit) = retrofit.create<ApiService>()
-//    }

@@ -19,7 +19,7 @@ class ItemDataSource @Inject constructor(
         )
     }
 
-    override suspend fun getPlaces(query: String): PlaceResponse {
+    override suspend fun getPlaces(query: String, rect: String): PlaceResponse {
         TODO("Not yet implemented")
     }
 }

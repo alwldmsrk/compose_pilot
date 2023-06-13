@@ -45,13 +45,13 @@ fun PlaceSearchTextField(
             Text(
                 modifier = Modifier.wrapContentSize(),
                 text = stringResource(id = R.string.search_placeholder),
-                color = colorResource(id = R.color.grey_50)
+                color = colorResource(id = R.color.grey_900)
             )
         },
         leadingIcon = {
             Icon(
-                painter = painterResource(id = R.drawable.home_24),
-                tint = colorResource(id = R.color.grey_50),
+                painter = painterResource(id = R.drawable.outline_search_black_24),
+                tint = colorResource(id = R.color.grey_900),
                 contentDescription = null
             )
         },
@@ -90,14 +90,13 @@ fun SearchTextField(
     val textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value)) }
     val textFieldValue = textFieldValueState.copy(text = value)
 
-
     BasicTextField(
         value = value,
         modifier = modifier.indicatorLine(enabled, isError, interactionSource, colors),
         onValueChange = onValueChange,
         enabled = enabled,
         textStyle = LocalTextStyle.current,
-        cursorBrush = SolidColor(colors.cursorColor(isError).value),
+        cursorBrush = SolidColor(Color.Black),
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
