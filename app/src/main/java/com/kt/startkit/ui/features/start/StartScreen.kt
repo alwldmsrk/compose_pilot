@@ -88,16 +88,3 @@ fun StartScreenCompose() {
         )
     }
 }
-
-//@OptIn(ExperimentalPermissionsApi::class)
-//@Composable
-//private fun requestLocationPermissions() {
-//    val locationPermissionState = rememberMultiplePermissionsState(permissions =
-//    listOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
-//
-//    if(locationPermissionState.allPermissionsGranted) {
-//
-//    }else {
-//
-//    }
-//}
