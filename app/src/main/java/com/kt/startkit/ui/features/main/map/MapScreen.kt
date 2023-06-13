@@ -14,7 +14,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,10 +38,14 @@ import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.LocationSource
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.InputHandler
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
@@ -45,6 +53,8 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.kt.startkit.core.logger.Logger
 import com.kt.startkit.core.permission.PermissionUtil
 import com.kt.startkit.domain.entity.Item
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 
 @Composable
 fun MapScreen(
@@ -56,6 +66,7 @@ fun MapScreen(
         is MapViewState.Initial -> {
             viewModel.fetchInitialData()
         }
+
         is MapViewState.Loading -> {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -111,7 +122,10 @@ private fun HomeItemView(item: Item) {
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun GoogleMapScreen(data: MapViewState.Data) {
+private fun GoogleMapScreen(
+    data: MapViewState.Data,
+    viewModel: MapScreenViewModel = hiltViewModel()
+    ) {
 
     val locationPermissionState = rememberMultiplePermissionsState(permissions = PermissionUtil.locationPermissions)
     val yangjae = LatLng(37.484557, 127.034022)
@@ -119,11 +133,31 @@ private fun GoogleMapScreen(data: MapViewState.Data) {
         position = CameraPosition.fromLatLngZoom(yangjae, 13f)
     }
 
+    /** Camera Position Change Listen */
+    CameraPositionChangeListen(
+        cameraPositionState = cameraPositionState,
+        onChanged = {rect ->
+            viewModel.occurUiEvent(UiEvent.CameraChange(
+                left = rect.southwest.longitude,
+                top = rect.northeast.latitude,
+                right = rect.northeast.longitude,
+                bottom = rect.southwest.latitude
+            ))
+        })
+
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         properties = MapProperties(isMyLocationEnabled = !isAllPermissionStateDenied(locationPermissionState.permissions)),
+        onMapClick = {
+            Logger.d("camera onMapClick  Lat : ${it.latitude}")
+            val rect = cameraPositionState.projection?.visibleRegion?.latLngBounds
 
+            Logger.i(
+                "cameraPosition state  left : ${rect?.southwest?.longitude} top : ${rect?.northeast?.latitude} " +
+                        "right : ${rect?.northeast?.longitude} bottom : ${rect?.southwest?.latitude}"
+            )
+        }
     ) {
         Marker(
             state = MarkerState(position = yangjae),
@@ -138,11 +172,24 @@ private fun GoogleMapScreen(data: MapViewState.Data) {
  */
 @OptIn(ExperimentalPermissionsApi::class)
 private fun isAllPermissionStateDenied(permissionStates: List<PermissionState>): Boolean {
-    for(permissionState in permissionStates) {
-        if(permissionState.status == PermissionStatus.Granted) {
+    for (permissionState in permissionStates) {
+        if (permissionState.status == PermissionStatus.Granted) {
             return false
         }
     }
     return true
+}
+
+@Composable
+fun CameraPositionChangeListen(cameraPositionState: CameraPositionState, onChanged : (LatLngBounds) -> Unit) {
+    LaunchedEffect(cameraPositionState) {
+        snapshotFlow { cameraPositionState.position }
+            .collect {
+                val rect = cameraPositionState.projection?.visibleRegion?.latLngBounds
+                rect?.let {
+                    onChanged(it)
+                }
+            }
+    }
 }
 
