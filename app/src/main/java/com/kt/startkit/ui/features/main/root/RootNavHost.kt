@@ -44,9 +44,9 @@ fun NavGraphBuilder.favoriteScreen(navController: NavController) {
         route = NavigationRoute.FAVORITE.routeName,
     ) {
         FavoriteScreen(
-            onItemClick = { route ->
-                navController.navigateToFavoriteItem(route)
-            },
+//            onItemClick = { route ->
+//                navController.navigateToFavoriteItem(route)
+//            },
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.kt.startkit.ui.features.main.map.search
+package com.kt.startkit.ui.features.main.map.component
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
