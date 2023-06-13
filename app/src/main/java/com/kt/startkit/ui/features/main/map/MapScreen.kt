@@ -141,7 +141,7 @@ private fun GoogleMapScreen(
         cameraPositionState = cameraPositionState,
         properties = MapProperties(isMyLocationEnabled = !isAllPermissionStateDenied(locationPermissionState.permissions)),
     ) {
-        AddMarkers(placeDatas = data.items)
+        AddMarkers(placeDatas = data.placeItems)
     }
 }
 
