@@ -9,6 +9,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -26,6 +27,7 @@ object PlaceModule {
     }
 
     @Provides
+    @Singleton
     fun providePlaceRepository(
         dataSource: PlaceDataSource,
         domainMapper: PlaceDomainMapper
@@ -33,17 +35,5 @@ object PlaceModule {
         return PlaceRepository(dataSource, domainMapper)
     }
 
-
-//    @Singleton
-//    @Provides
-//    fun providePlaceRepository(
-//        preferences: PreferenceDataStore,
-//        @AppDispatchers(AppCoroutineDispatchers.IO) dispatcher: CoroutineDispatcher,
-//    ): UserProfileRepository {
-//        return UserProfileRepository(
-//            preferences = preferences,
-//            dispatcher = dispatcher
-//        )
-//    }
 }
 

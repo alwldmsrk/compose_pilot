@@ -21,10 +21,9 @@ class FavoriteDataSource @Inject constructor(
         val pagingSourceFactory = { mapDatabase.favoriteDao().loadAllFavoritesWithPaging() }
         return Pager(
             config = PagingConfig(
-                pageSize = 20,
+                pageSize = 10,
                 enablePlaceholders = false
             ),
-            initialKey = null,
             pagingSourceFactory = pagingSourceFactory
         ).flow
 

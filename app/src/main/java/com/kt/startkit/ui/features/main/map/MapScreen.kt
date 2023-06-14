@@ -1,13 +1,18 @@
 package com.kt.startkit.ui.features.main.map
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -70,11 +76,24 @@ fun MapScreen(
                 modifier = Modifier
             ) {
                 GoogleMapScreen(data = state as MapViewState.Data)
-                SearchTextField {
-                    with(viewModel) {
-                        sendUiAction(UiAction.SearchPlace)
+                Column(
+                    Modifier.padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SearchTextField {
+                        with(viewModel) {
+                            sendUiAction(UiAction.SearchPlace)
+                        }
+                    }
+                    ReSearchTextField{
+                        with(viewModel){
+                            sendUiAction(UiAction.SearchPlace)
+                        }
                     }
                 }
+
+
             }
         }
 
@@ -88,35 +107,6 @@ fun MapScreen(
         }
     }
 
-}
-
-
-/**
- * 장소 검색을 위한 TextField
- */
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-private fun SearchTextField(
-    viewModel: MapScreenViewModel = hiltViewModel(),
-    onClickSearch: () -> Unit
-) {
-    val textState = viewModel.searchText
-    val keyboardController = LocalSoftwareKeyboardController.current
-    PlaceSearchTextField(modifier = Modifier
-        .padding(top = 20.dp)
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(horizontal = 10.dp)
-        .clip(RoundedCornerShape(15.dp))
-        .background(colorResource(R.color.grey_50)),
-        value = textState,
-        onSearchKeyboardAction = {
-            if (textState.isNotEmpty()) {
-                onClickSearch()
-                keyboardController?.hide()
-            }
-        },
-        onValueChange = { viewModel.setSearchText(it) })
 }
 
 
@@ -158,6 +148,50 @@ private fun GoogleMapScreen(
     ) {
         AddPlaceMarkers(placeDatas = data.placeItems, onClick = { clickedMarkerState.value = it })
         AddFavoriteMarkers(favoriteDatas = data.favorites, onClick = { clickedMarkerState.value = it })
+    }
+}
+
+
+/**
+ * 장소 검색을 위한 TextField
+ */
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+private fun SearchTextField(
+    viewModel: MapScreenViewModel = hiltViewModel(),
+    onClickSearch: () -> Unit
+) {
+    val textState = viewModel.searchText
+    val keyboardController = LocalSoftwareKeyboardController.current
+    PlaceSearchTextField(modifier = Modifier
+        .padding(top = 20.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(horizontal = 10.dp)
+        .clip(RoundedCornerShape(15.dp))
+        .background(colorResource(R.color.grey_50)),
+        value = textState,
+        onSearchKeyboardAction = {
+            if (textState.isNotEmpty()) {
+                onClickSearch()
+                keyboardController?.hide()
+            }
+        },
+        onValueChange = { viewModel.setSearchText(it) })
+}
+
+
+@Composable
+private fun ReSearchTextField(
+    onClickReSearch: () -> Unit
+){
+    IconButton(
+        onClick = { onClickReSearch() },
+    ) {
+        Icon(
+            painterResource(id = R.drawable.outline_replay_circle_filled_black_24),
+            contentDescription = null
+        )
     }
 }
 
@@ -266,8 +300,6 @@ fun MarkerClickProcess(
                 contentText = "관심 장소에서 제거하시겠습니까?"
             )
         }
-
-        else -> {}
     }
 }
 

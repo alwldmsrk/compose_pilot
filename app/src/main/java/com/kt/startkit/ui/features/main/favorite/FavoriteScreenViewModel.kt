@@ -80,8 +80,6 @@ class FavoriteScreenViewModel @Inject constructor(
         data class DeleteBookmark(val name: String) : UiAction()
         object GetBookmark : UiAction()
     }
-
-
 }
 
 
