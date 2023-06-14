@@ -26,12 +26,10 @@ import com.kt.startkit.ui.features.main.LocalNavigationProvider
 import com.kt.startkit.ui.features.main.favorite.component.PlaceColumnContent
 import com.kt.startkit.ui.features.main.favorite.component.ResultDataItem
 import com.kt.startkit.ui.features.main.root.NavigationRoute
-import com.kt.startkit.ui.features.main.root.navigateToFavoriteItem
 
 
 @Composable
 fun FavoriteScreen(
-    onItemClick: (String) -> Unit,
     viewModel: FavoriteScreenViewModel = hiltViewModel(),
 ) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
@@ -50,7 +48,7 @@ fun FavoriteScreen(
         }
 
         is FavoriteViewState.Data -> {
-            FavoriteListWithPaging(onItemClick,(state as FavoriteViewState.Data).favoriteItem.collectAsLazyPagingItems())
+            FavoriteListWithPaging((state as FavoriteViewState.Data).favoriteItem.collectAsLazyPagingItems())
         }
 
         else -> {}
@@ -84,7 +82,6 @@ fun EmptyFavoriteList() {
  */
 @Composable
 fun FavoriteListWithPaging(
-    onItemClick: (String) -> Unit,
     listData: LazyPagingItems<FavoriteData>,
     viewModel: FavoriteScreenViewModel = hiltViewModel()
 ) {
@@ -96,14 +93,13 @@ fun FavoriteListWithPaging(
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        val onClickItem: (String) -> Unit = { onItemClick }
         items(listData) { item ->
             if(item != null){
                 ResultDataItem(
                     //TODO onClickItem에 url 값 넣어주기
                     onClickItem = {
-                        navController.navigateToFavorite(item.name)
-
+                        val url = item.url
+                        navController.navigate("/favorite?url=$url")
                     },
                     bookMarkIcon = R.drawable.outline_favorite_black_24,
                     onClickBookmark = {
@@ -119,12 +115,6 @@ fun FavoriteListWithPaging(
             }
         }
     }
-//
-//    @Composable
-//    fun MoveToDetailItem(){
-//        val navController: NavHostController = rememberNavController()
-//        NavHost(navController)
-//    }
 
 }
 

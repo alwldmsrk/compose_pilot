@@ -3,22 +3,24 @@ package com.kt.startkit.ui.features.main.root
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.kt.startkit.ui.features.main.LocalNavigationProvider
 import com.kt.startkit.ui.features.main.favorite.FavoriteScreen
 import com.kt.startkit.ui.features.main.map.MapScreen
+import com.kt.startkit.ui.features.main.web.WebViewScreen
+
+const val DETAIL_ARGUMENT_KEY = "url"
 
 enum class NavigationRoute(val routeName: String) {
     MAP("/map_screen"),
-    FAVORITE_GRAPH("/favorite"),
 
-    FAVORITE("/favorite/root"),
-    FAVORITE_PLACE_URL("/favorite/place_url?url={url}"),
+    FAVORITE("/favorite"),
+    FAVORITE_PLACE_URL("/favorite?url={$DETAIL_ARGUMENT_KEY}"),
 }
 
 @Composable
@@ -31,10 +33,13 @@ fun RootNavHost() {
     ) {
         mapScreen()
         favoriteScreen(navController = navController)
-        favoriteDetailScreen(navController = navController)
+        favoriteDetailScreen()
     }
 }
 
+/**
+ * Map Screen
+ */
 fun NavGraphBuilder.mapScreen() {
     composable(
         route = NavigationRoute.MAP.routeName,
@@ -43,30 +48,30 @@ fun NavGraphBuilder.mapScreen() {
     }
 }
 
+/**
+ * 즐겨찾기 Screen
+ */
 fun NavGraphBuilder.favoriteScreen(navController: NavController) {
     composable(
         route = NavigationRoute.FAVORITE.routeName,
     ) {
         FavoriteScreen(
-            onItemClick = { route ->
-                navController.navigateToFavoriteDetailScreen(route)
-            },
         )
     }
 }
 
-fun NavGraphBuilder.favoriteDetailScreen(navController: NavController) {
+/**
+ * 즐겨찾기 Detail Screen
+ */
+fun NavGraphBuilder.favoriteDetailScreen() {
     composable(
         route = NavigationRoute.FAVORITE_PLACE_URL.routeName,
         arguments =
-        listOf(navArgument("url") { type = NavType.StringType }),
-
-        ) {
-//        NoticeScreen(
-//            onBackClick = onBackClick
+        listOf(navArgument(DETAIL_ARGUMENT_KEY) { type = NavType.StringType }),
+    ) { backStackEntry ->
+        backStackEntry.arguments?.getString(DETAIL_ARGUMENT_KEY)?.let { WebViewScreen(url = it) }
     }
 }
-
 
 
 /**
@@ -87,10 +92,6 @@ fun NavController.navigateToFavorite(navOptions: NavOptions? = null) {
     navigate(NavigationRoute.FAVORITE.routeName, navOptions)
 }
 
-
-fun NavController.navigateToFavoriteDetailScreen(navOptions: NavOptions? = null) {
-    navigate(NavigationRoute.FAVORITE_PLACE_URL.routeName, navOptions)
-}
 
 
 
