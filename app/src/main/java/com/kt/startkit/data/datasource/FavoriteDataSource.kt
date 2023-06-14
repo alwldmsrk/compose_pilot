@@ -3,12 +3,13 @@ package com.kt.startkit.data.datasource
 import com.kt.startkit.data.local.MapDatabase
 import com.kt.startkit.data.model.FavoriteModel
 import com.kt.startkit.data.model.PlaceResponse
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FavoriteDataSource @Inject constructor(
     private val mapDatabase: MapDatabase
 ) {
-    suspend fun getFavoriteModels(): List<FavoriteModel> {
+    suspend fun getFavoriteModels(): Flow<List<FavoriteModel>> {
         return mapDatabase.favoriteDao().loadAllFavorites()
     }
 
