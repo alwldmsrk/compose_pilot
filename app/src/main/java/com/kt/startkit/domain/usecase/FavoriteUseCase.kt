@@ -18,25 +18,19 @@ class FavoriteUseCase @Inject constructor(
 
     fun getAllFavorites(): Flow<List<FavoriteData>> {
         return dataSource.getFavoriteModels()
-            .map {models ->
-                models.map{
+            .map { models ->
+                models.map {
                     domainMapper(it)
                 }
             }
-     fun getAllFavorites() : Flow<List<FavoriteData>> {
-        return dataSource.getFavoriteModels().map { item ->
+    }
+
+
+    fun getAllFavoritesWithPaging(): Flow<PagingData<FavoriteData>> {
+        return dataSource.getFavoriteModelsWithPaging().map { item ->
             item.map {
                 domainMapper(it)
             }
-        }
-    }
-
-    fun getAllFavoritesWithPaging() : Flow<PagingData<FavoriteData>> {
-        return dataSource.getFavoriteModelsWithPaging().map {
-            item ->
-                item.map {
-                    domainMapper(it)
-                }
         }
     }
 
