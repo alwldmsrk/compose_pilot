@@ -39,13 +39,15 @@ class FavoriteDataSource @Inject constructor(
         lng: Double,
         name: String,
         address: String,
+        url: String
     ) {
         mapDatabase.favoriteDao().insertFavorite(
             FavoriteModel(
                 lat = lat,
                 lng = lng,
                 name = name,
-                address = address
+                address = address,
+                url = url
             )
         )
     }

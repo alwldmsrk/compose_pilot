@@ -43,12 +43,14 @@ class FavoriteUseCase @Inject constructor(
         lng: Double,
         name: String,
         address: String,
+        url: String
     ) {
         dataSource.addFavoriteModel(
             lat = lat,
             lng = lng,
             name = name,
-            address = address
+            address = address,
+            url = url,
         )
     }
 }

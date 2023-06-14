@@ -10,7 +10,8 @@ class FavoriteDomainMapper @Inject constructor() : Mapper<FavoriteModel, Favorit
             lng = model.lng,
             lat = model.lat,
             name = model.name,
-            address = model.address
+            address = model.address,
+            url = model.url
         )
     }
 
