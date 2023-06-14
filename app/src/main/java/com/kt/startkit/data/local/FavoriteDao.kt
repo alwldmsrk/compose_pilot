@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.kt.startkit.data.model.FavoriteModel
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoriteDao {
@@ -16,5 +17,5 @@ interface FavoriteDao {
     suspend fun deleteFavorite(name: String)
 
     @Query("SELECT * FROM FavoriteModel")
-    suspend fun loadAllFavorites(): List<FavoriteModel>
+    fun loadAllFavorites(): Flow<List<FavoriteModel>>
 }

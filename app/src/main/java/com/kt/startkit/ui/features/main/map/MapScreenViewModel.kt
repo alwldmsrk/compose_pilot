@@ -1,6 +1,7 @@
 package com.kt.startkit.ui.features.main.map
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.datastore.dataStore
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kt.startkit.core.base.StateViewModel
@@ -11,9 +12,12 @@ import com.kt.startkit.core.logger.Logger
 import com.kt.startkit.domain.usecase.SearchPlaceUseCase
 import com.kt.startkit.ui.features.main.map.CameraRect.Companion.from
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,37 +35,75 @@ class MapScreenViewModel @Inject constructor(
 
     private var currentRect: CameraRect? = null
 
-    private val placeItems = MutableStateFlow<List<PlaceData>>(emptyList())
-    private val favorites = MutableStateFlow<List<FavoriteData>>(emptyList())
-    private val uiDataStates = combine(
-        placeItems,
-        favorites,
-        ::Pair
-    ).map { (place, favorite) ->
-        //todo Logger 잘 찍히는지
-        updateState { MapViewState.Data(placeItems = place, favorites = favorite) }
+//    private val placeItems = MutableStateFlow<List<PlaceData>>(emptyList())
+//    private val favorites = MutableStateFlow<List<FavoriteData>>(emptyList())
+//    private val uiDataStates = combine(
+//        placeItems,
+//        favorites,
+//        ::Pair
+//    ).map { (place, favorite) ->
+//        Logger.i("combine map test ")
+//        updateState { MapViewState.Data(placeItems = place, favorites = favorite) }
+//    }.stateIn(
+//        scope = viewModelScope
+//    )
+
+    /**
+     * 검색 장소와 관심 장소를 UIState.Data에 합쳐서 올려보낸다.
+     */
+    private suspend fun updateUiStateData(
+        placeItems: List<PlaceData>? = null,
+        favoriteItems: List<FavoriteData>? = null,
+    ) {
+        val currentState = viewState.value
+        if (currentState is MapViewState.Data) {
+            updateState { combineStateData(currentState, placeItems, favoriteItems) }
+        } else {
+            updateState {
+                MapViewState.Data(
+                    placeItems = placeItems ?: emptyList(),
+                    favorites = favoriteItems ?: emptyList()
+                )
+            }
+        }
     }
 
-//    private fun combineStateData(
-//        state: MapViewState.Data,
-//        placeItems: List<PlaceData>?,
-//        favorites: List<FavoriteData>?,
-//    ): MapViewState.Data {
-//        return MapViewState.Data(
-//            placeItems ?: state.placeItems,
-//            favorites ?: state.favorites,
-//        )
-//    }
+
+    /**
+     * Uistate.Data를 보낼 때 이전의 값에 덮어 씌워 보내준다.
+     */
+    private fun combineStateData(
+        state: MapViewState.Data,
+        placeItems: List<PlaceData>?,
+        favorites: List<FavoriteData>?,
+    ): MapViewState.Data {
+        return MapViewState.Data(
+            placeItems ?: state.placeItems,
+            favorites ?: state.favorites,
+        )
+    }
 
     fun fetchInitialData() {
         viewModelScope.launch {
-            updateState { MapViewState.Loading }
-            try {
-                updateState { MapViewState.Data(emptyList(), emptyList()) }
-            } catch (e: Exception) {
-                updateState { MapViewState.Error("Unknown error") }
-            }
+            launch { initUiState() }
+            launch { loadFavoriteItems() }
         }
+    }
+
+    private suspend fun initUiState() {
+        updateState { MapViewState.Loading }
+        try {
+            updateUiStateData(placeItems = emptyList())
+        } catch (e: Exception) {
+            updateState { MapViewState.Error("Unknown error") }
+        }
+    }
+
+    private suspend fun loadFavoriteItems() {
+        favoriteUseCase.getAllFavorites()
+            .collect { favorites ->
+                updateUiStateData(favoriteItems = favorites)
+            }
     }
 
 
@@ -85,6 +127,17 @@ class MapScreenViewModel @Inject constructor(
             is UiAction.SearchPlace -> {
                 requestSearchPlace(MapViewState.Initial)
             }
+
+            is UiAction.AddFavoritePlace -> {
+                Logger.i("AddFavoritePlace Marker : $event")
+                viewModelScope.launch {
+                    favoriteUseCase.addFavorite(lat = event.lat, lng = event.lng, name = event.name, address = event.address)
+                }
+            }
+
+            is UiAction.RemoveFavoritePlace -> {
+                viewModelScope.launch { favoriteUseCase.removeFavorite(event.name) }
+            }
         }
     }
 
@@ -100,7 +153,7 @@ class MapScreenViewModel @Inject constructor(
                 if (currentRect != null) {
                     val images =
                         placeUseCase.getPlaces(query = searchText, rect = from(currentRect!!))
-                    updateState { MapViewState.Data(images, emptyList()) }
+                    updateUiStateData(placeItems = images)
                 }
             } catch (e: Exception) {
                 updateState { MapViewState.Error("검색에 실패하였습니다.") }
@@ -139,5 +192,13 @@ sealed class UiAction {
     ) : UiAction()
 
     object SearchPlace : UiAction()
+    data class AddFavoritePlace(
+        val lat: Double,
+        val lng: Double,
+        val name: String,
+        val address: String,
+    ) : UiAction()
+
+    data class RemoveFavoritePlace(val name: String) : UiAction()
 }
 

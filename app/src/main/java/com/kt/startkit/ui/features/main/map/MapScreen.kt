@@ -12,6 +12,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -26,9 +28,11 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -38,7 +42,9 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.kt.startkit.R
 import com.kt.startkit.core.logger.Logger
 import com.kt.startkit.core.permission.PermissionUtil
+import com.kt.startkit.domain.entity.FavoriteData
 import com.kt.startkit.domain.entity.PlaceData
+import com.kt.startkit.ui.component.dialog.ShowDialog
 import com.kt.startkit.ui.features.main.map.component.PlaceSearchTextField
 
 @Composable
@@ -59,17 +65,17 @@ fun MapScreen(
         }
 
         is MapViewState.Data -> {
-                Box(
-                    modifier = Modifier
-                ) {
-                    GoogleMapScreen(data = state as MapViewState.Data)
-                    SearchTextField {
-                        with(viewModel) {
-                            sendUiAction(UiAction.SearchPlace)
-                        }
+            Box(
+                modifier = Modifier
+            ) {
+                GoogleMapScreen(data = state as MapViewState.Data)
+                SearchTextField {
+                    with(viewModel) {
+                        sendUiAction(UiAction.SearchPlace)
                     }
                 }
             }
+        }
 
         is MapViewState.Error -> {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -113,30 +119,35 @@ private fun SearchTextField(
 }
 
 
-
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun GoogleMapScreen(
     data: MapViewState.Data,
     viewModel: MapScreenViewModel = hiltViewModel()
-    ) {
+) {
 
     val locationPermissionState = rememberMultiplePermissionsState(permissions = PermissionUtil.locationPermissions)
     val yangjae = LatLng(37.484557, 127.034022)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(yangjae, 13f)
     }
+    val clickedMarkerState = remember { mutableStateOf<Marker?>(null) }
+    val clickedMarker = clickedMarkerState.value
+    if (clickedMarker != null) {
+        MarkerClickProcess(marker = clickedMarker, dismiss = { clickedMarkerState.value = null })
+    }
 
-    /** Camera Position Change Listen */
     CameraPositionChangeListen(
         cameraPositionState = cameraPositionState,
-        onChanged = {rect ->
-            viewModel.sendUiAction(UiAction.CameraChange(
-                left = rect.southwest.longitude,
-                top = rect.northeast.latitude,
-                right = rect.northeast.longitude,
-                bottom = rect.southwest.latitude
-            ))
+        onChanged = { rect ->
+            viewModel.sendUiAction(
+                UiAction.CameraChange(
+                    left = rect.southwest.longitude,
+                    top = rect.northeast.latitude,
+                    right = rect.northeast.longitude,
+                    bottom = rect.southwest.latitude
+                )
+            )
         })
 
     GoogleMap(
@@ -144,7 +155,8 @@ private fun GoogleMapScreen(
         cameraPositionState = cameraPositionState,
         properties = MapProperties(isMyLocationEnabled = !isAllPermissionStateDenied(locationPermissionState.permissions)),
     ) {
-        AddMarkers(placeDatas = data.placeItems)
+        AddPlaceMarkers(placeDatas = data.placeItems, onClick = { clickedMarkerState.value = it })
+        AddFavoriteMarkers(favoriteDatas = data.favorites, onClick = { clickedMarkerState.value = it })
     }
 }
 
@@ -161,8 +173,11 @@ private fun isAllPermissionStateDenied(permissionStates: List<PermissionState>):
     return true
 }
 
+/**
+ * 유저 터치로 화면 이동시 카메라 변경 체크
+ */
 @Composable
-fun CameraPositionChangeListen(cameraPositionState: CameraPositionState, onChanged : (LatLngBounds) -> Unit) {
+fun CameraPositionChangeListen(cameraPositionState: CameraPositionState, onChanged: (LatLngBounds) -> Unit) {
     LaunchedEffect(cameraPositionState) {
         snapshotFlow { cameraPositionState.position }
             .collect {
@@ -175,14 +190,82 @@ fun CameraPositionChangeListen(cameraPositionState: CameraPositionState, onChang
 }
 
 @Composable
-fun AddMarkers(placeDatas: List<PlaceData>) {
-    for(placeData in placeDatas) {
+fun AddPlaceMarkers(placeDatas: List<PlaceData>, onClick: (Marker) -> Unit) {
+    for (placeData in placeDatas) {
         Logger.i("placeData => y : ${placeData.y} x : ${placeData.x}, name = ${placeData.place_name}")
         Marker(
             state = MarkerState(position = LatLng(placeData.y.toDouble(), placeData.x.toDouble())),
             title = placeData.place_name,
-            snippet = placeData.address_name
+            snippet = placeData.address_name,
+            tag = MarkerType.PLACE.tag,
+            onInfoWindowClick = onClick
         )
     }
+}
+
+@Composable
+fun AddFavoriteMarkers(favoriteDatas: List<FavoriteData>, onClick: (Marker) -> Unit) {
+    for (favoriteData in favoriteDatas) {
+        Logger.i("favoriteData => y : ${favoriteData.lat} x : ${favoriteData.lng}, name = ${favoriteData.name}")
+        Marker(
+            state = MarkerState(position = LatLng(favoriteData.lat, favoriteData.lng)),
+            title = favoriteData.name,
+            snippet = favoriteData.address,
+            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN),
+            tag = MarkerType.FAVORITE.tag,
+            onInfoWindowClick = onClick
+        )
+    }
+}
+
+@Composable
+fun MarkerClickProcess(
+    marker: Marker,
+    dismiss: () -> Unit,
+    viewModel: MapScreenViewModel = hiltViewModel()
+) {
+    when (marker.tag) {
+        MarkerType.PLACE.tag -> {
+            ShowDialog(
+                onDismissRequest = {
+                    dismiss()
+                },
+                onButtonClick = {
+                    viewModel.sendUiAction(
+                        UiAction.AddFavoritePlace(
+                            lat = marker.position.latitude,
+                            lng = marker.position.longitude,
+                            name = marker.title ?: "",
+                            address = marker.snippet ?: "",
+                        )
+                    )
+                    marker.isVisible = false
+                    dismiss()
+                },
+                contentText = "관심 장소에 추가하시겠습니까? "
+            )
+        }
+
+        MarkerType.FAVORITE.tag -> {
+            ShowDialog(
+                onDismissRequest = {
+                    dismiss()
+                },
+                onButtonClick = {
+                    viewModel.sendUiAction(
+                        UiAction.RemoveFavoritePlace(marker.title ?: "")
+                    )
+                    dismiss()
+                },
+                contentText = "관심 장소에서 제거하시겠습니까?"
+            )
+        }
+
+        else -> {}
+    }
+}
+
+enum class MarkerType(val tag: String) {
+    PLACE("place"), FAVORITE("favorite")
 }
 
