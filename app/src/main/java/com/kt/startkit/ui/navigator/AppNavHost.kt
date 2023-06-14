@@ -35,14 +35,6 @@ fun AppNavigationRoute.screen(controller: NavHostController,
             StartScreen()
         }
         AppNavigationRoute.ROOT -> {
-//            val backStackEntry = remember(backstackEntry) {
-//                controller.getBackStackEntry(prevBackStackRouteName)
-//            }
-//
-            /// TEST
-//            val screenViewModel: StartScreenViewModel = hiltViewModel(backStackEntry)
-            //// inject
-//            RootScreen(screenViewModel= screenViewModel)
             RootScreen()
         }
     }

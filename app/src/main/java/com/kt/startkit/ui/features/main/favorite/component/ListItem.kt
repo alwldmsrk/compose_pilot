@@ -33,10 +33,12 @@ fun ResultDataItem(
     bookMarkIcon: Int,
     columnContent: @Composable ColumnScope.() -> Unit,
     onClickBookmark: (() -> Unit)? = null,
-) {
+    onClickItem: () -> Unit,
+    ) {
     Column(
         Modifier
             .padding(horizontal = 20.dp)
+            .clickable { onClickItem() }
     ) {
         Row(
             modifier = Modifier
