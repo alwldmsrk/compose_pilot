@@ -9,6 +9,7 @@ import androidx.paging.map
 import com.kt.startkit.core.base.StateViewModel
 import com.kt.startkit.domain.entity.FavoriteData
 import com.kt.startkit.domain.usecase.FavoriteUseCase
+import com.kt.startkit.ui.features.main.map.UiAction
 
 
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,39 +27,29 @@ class FavoriteScreenViewModel @Inject constructor(
     private val favoriteUseCase: FavoriteUseCase
 ) : StateViewModel<FavoriteViewState>(initialState = FavoriteViewState.Initial) {
 
-
-    val favoriteList: List<FavoriteData> = listOf(FavoriteData(0.0, 0.0, "안경점", "태봉로 151-1"))
-
     private val _favoriteListWithPaging =
         MutableStateFlow<PagingData<FavoriteData>>(PagingData.empty())
-    val favoriteListWithPaging = _favoriteListWithPaging
+    private val favoriteListWithPaging = _favoriteListWithPaging
 
 
-    // TODO Screen 에서 호출 (임시로 데이터 추가)
-    fun getFavoriteList() {
+    /**
+     * Compose Paging3 라이브러리를 사용하는 경우
+     */
+    private fun getFavoriteListWithPaging() {
         viewModelScope.launch {
             updateState { FavoriteViewState.Loading }
             try {
-                updateState { FavoriteViewState.Data(favoriteList) }
+                favoriteUseCase.getAllFavoritesWithPaging()
+                    .cachedIn(viewModelScope).collect {
+                        _favoriteListWithPaging.value = it
+                        updateState { FavoriteViewState.Data(favoriteListWithPaging) }
+                    }
             } catch (e: Exception) {
                 updateState { FavoriteViewState.Error("Unknown error") }
             }
         }
     }
 
-    /**
-     * Compose Paging3 라이브러리를 사용하는 경우
-     */
-    fun getFavoriteListWithPaging() {
-        viewModelScope.launch {
-            favoriteUseCase.getAllFavoritesWithPaging()
-                .cachedIn(viewModelScope).collect {
-                    _favoriteListWithPaging.value = it
-                }
-
-        }
-
-    }
 
     /**
      * 북마크 삭제 호출
@@ -69,22 +60,25 @@ class FavoriteScreenViewModel @Inject constructor(
         }
     }
 
+
     fun sendUiAction(event: UiAction) {
         when (event) {
             is UiAction.DeleteBookmark -> {
                 requestDeleteBookmark(event.name)
             }
+            is UiAction.GetBookmark -> {
+                getFavoriteListWithPaging()
+            }
         }
     }
-
-
 
 
     /**
      * Composable로부터 전달 받을 UiAction의 규격 정의
      */
     sealed class UiAction {
-        data class DeleteBookmark(val name: String): UiAction()
+        data class DeleteBookmark(val name: String) : UiAction()
+        object GetBookmark : UiAction()
     }
 
 

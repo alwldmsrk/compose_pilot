@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 
@@ -22,12 +20,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-
 import com.kt.startkit.R
 import com.kt.startkit.domain.entity.FavoriteData
 import com.kt.startkit.ui.features.main.favorite.component.PlaceColumnContent
 import com.kt.startkit.ui.features.main.favorite.component.ResultDataItem
-import com.kt.startkit.ui.features.main.favorite.component.ResultDataItemWithPaging
+import com.kt.startkit.ui.features.main.map.MapViewState
 
 
 @Composable
@@ -42,8 +39,7 @@ fun FavoriteScreen(
         }
 
         is FavoriteViewState.Initial -> {
-            viewModel.getFavoriteList()
-            viewModel.getFavoriteListWithPaging()
+            viewModel.sendUiAction(FavoriteScreenViewModel.UiAction.GetBookmark)
         }
 
         is FavoriteViewState.Error -> {
@@ -51,8 +47,7 @@ fun FavoriteScreen(
         }
 
         is FavoriteViewState.Data -> {
-            //FavoriteList(state as FavoriteViewState.Data)
-            FavoriteListWithPaging(viewModel.favoriteListWithPaging.collectAsLazyPagingItems())
+            FavoriteListWithPaging((state as FavoriteViewState.Data).favoriteItem.collectAsLazyPagingItems())
         }
 
         else -> {}
@@ -82,40 +77,7 @@ fun EmptyFavoriteList() {
 }
 
 /**
- * 즐겨찾기 리스트 표출 Composable
- */
-@Composable
-fun FavoriteList(
-    listData: FavoriteViewState.Data,
-    viewModel: FavoriteScreenViewModel = hiltViewModel()
-) {
-    LazyColumn(
-        modifier = Modifier
-            .padding(vertical = 30.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-
-        items(listData.favoriteItem) {
-            ResultDataItem(
-                bookMarkIcon = R.drawable.outline_favorite_black_24,
-                onClickBookmark = {
-//                    viewModel.sendUiAction(FavoriteScreenViewModel.UiAction.DeleteBookmark(item.name))
-                },
-                columnContent = {
-                    PlaceColumnContent(
-                        title = it.name,
-                        address = it.address
-                    )
-                }
-            )
-        }
-    }
-}
-
-
-/**
- * 즐겨찾기 리스트 표출 Composable (with Paging3)
+ * 즐겨찾기 리스트 표출 Composable (with Paging)
  */
 @Composable
 fun FavoriteListWithPaging(
@@ -146,18 +108,37 @@ fun FavoriteListWithPaging(
         }
     }
 
-//        ResultDataItem(
-//            bookMarkIcon = R.drawable.outline_favorite_black_24,
-//            onClickBookmark = {
-//                viewModel.sendUiAction(FavoriteScreenViewModel.UiAction.DeleteBookMark)
-//            },
-//            columnContent = {
-//                PlaceColumnContent(
-//                    title = it.name,
-//                    address = it.address
-//                )
-//            }
-//        )
+    /**
+     * 즐겨찾기 리스트 표출 Composable
+     */
+    /*@Composable
+    fun FavoriteList(
+        listData: FavoriteViewState.Data,
+        viewModel: FavoriteScreenViewModel = hiltViewModel()
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(vertical = 30.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+
+            items(listData.favoriteItem) {
+                ResultDataItem(
+                    bookMarkIcon = R.drawable.outline_favorite_black_24,
+                    onClickBookmark = {
+    //                    viewModel.sendUiAction(FavoriteScreenViewModel.UiAction.DeleteBookmark(item.name))
+                    },
+                    columnContent = {
+                        PlaceColumnContent(
+                            title = it.name,
+                            address = it.address
+                        )
+                    }
+                )
+            }
+        }
+    }*/
 
 }
 
