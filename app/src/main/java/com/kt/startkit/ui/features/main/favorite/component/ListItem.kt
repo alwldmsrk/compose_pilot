@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kt.startkit.R
+import com.kt.startkit.domain.entity.FavoriteData
 
 
 @Composable
@@ -78,6 +79,64 @@ fun ResultDataItem(
         )
     }
 }
+
+
+
+@Composable
+fun ResultDataItemWithPaging(
+    item: FavoriteData?,
+    bookMarkIcon: Int,
+    columnContent: @Composable ColumnScope.() -> Unit,
+    onClickBookmark: (() -> Unit)? = null,
+) {
+    Column(
+        Modifier
+            .padding(horizontal = 20.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(vertical = 15.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(bookMarkIcon),
+                modifier = Modifier
+                    .padding(start = 10.dp, end = 14.dp),
+                contentDescription = null
+            )
+            Column(
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+            ) {
+                columnContent()
+            }
+
+            onClickBookmark?.let {
+                IconButton(
+                    onClick = { it() },
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.outline_delete_black_24),
+                        contentDescription = null
+                    )
+                }
+            }
+        }
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp),
+            color = colorResource(id = R.color.grey_900)
+        )
+    }
+}
+
+
+
 
 @Composable
 fun PlaceColumnContent(

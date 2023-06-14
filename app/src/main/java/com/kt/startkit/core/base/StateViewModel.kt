@@ -22,6 +22,7 @@ abstract class StateViewModel<UiState : ViewState> constructor(initialState: UiS
         _state.emit(updatedState)
 //        _state.value = updatedState
     }
+
 }
 
 @NonRestartableComposable
