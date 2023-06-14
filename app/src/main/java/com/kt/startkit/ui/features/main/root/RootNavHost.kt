@@ -14,11 +14,11 @@ import com.kt.startkit.ui.features.main.favorite.FavoriteScreen
 import com.kt.startkit.ui.features.main.map.MapScreen
 import com.kt.startkit.ui.features.main.web.WebViewScreen
 
-const val DETAIL_ARGUMENT_KEY = "url"
 
+
+const val DETAIL_ARGUMENT_KEY = "url"
 enum class NavigationRoute(val routeName: String) {
     MAP("/map_screen"),
-
     FAVORITE("/favorite"),
     FAVORITE_PLACE_URL("/favorite?url={$DETAIL_ARGUMENT_KEY}"),
 }
@@ -32,7 +32,7 @@ fun RootNavHost() {
         startDestination = NavigationRoute.MAP.routeName,
     ) {
         mapScreen()
-        favoriteScreen(navController = navController)
+        favoriteScreen()
         favoriteDetailScreen()
     }
 }
@@ -51,12 +51,11 @@ fun NavGraphBuilder.mapScreen() {
 /**
  * 즐겨찾기 Screen
  */
-fun NavGraphBuilder.favoriteScreen(navController: NavController) {
+fun NavGraphBuilder.favoriteScreen() {
     composable(
         route = NavigationRoute.FAVORITE.routeName,
     ) {
-        FavoriteScreen(
-        )
+        FavoriteScreen()
     }
 }
 

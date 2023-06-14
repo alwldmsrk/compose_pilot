@@ -83,34 +83,6 @@ fun RootContentView() {
                 ),
         ) {
             Column(Modifier.fillMaxSize()) {
-                // Show the top app bar on top level destinations.
-                val destination = navController.currentRootTapBarItem()
-                if (destination != null) {
-//                    CenterAlignedTopAppBar(
-//                        title = { Text(text = stringResource(id = destination.titleResId)) },
-////                        navigationIcon = {
-////                            IconButton(onClick = onNavigationClick) {
-////                                Icon(
-////                                    imageVector = navigationIcon,
-////                                    contentDescription = navigationIconContentDescription,
-////                                    tint = MaterialTheme.colorScheme.onSurface,
-////                                )
-////                            }
-////                        },
-////                        actions = {
-////                            IconButton(onClick = onActionClick) {
-////                                Icon(
-////                                    imageVector = actionIcon,
-////                                    contentDescription = actionIconContentDescription,
-////                                    tint = MaterialTheme.colorScheme.onSurface,
-////                                )
-////                            }
-////                        },
-//                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-//                            containerColor = Color.Transparent,
-//                        ),
-//                    )
-                }
                 RootNavHost()
             }
         }

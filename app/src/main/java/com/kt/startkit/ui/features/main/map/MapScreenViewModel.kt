@@ -30,7 +30,7 @@ class MapScreenViewModel @Inject constructor(
     /**
      * 검색할 단어
      */
-    private val _searchText = mutableStateOf("")
+    private val _searchText = mutableStateOf(" ")
     val searchText get() = _searchText.value
 
     private var currentRect: CameraRect? = null
@@ -112,7 +112,7 @@ class MapScreenViewModel @Inject constructor(
             }
 
             is UiAction.SearchPlace -> {
-                requestSearchPlace(MapViewState.Initial)
+                requestSearchPlace()
             }
 
             is UiAction.AddFavoritePlace -> {
@@ -128,21 +128,19 @@ class MapScreenViewModel @Inject constructor(
         }
     }
 
-
     /**
      * 장소 검색 호출
      */
-    private fun requestSearchPlace(isInitial: MapViewState) {
+    private fun requestSearchPlace() {
         viewModelScope.launch {
             try {
-                // TODO 로딩 화면 추가
-                //updateState { MapViewState.Loading }
                 if (currentRect != null) {
-                    val images =
+                    val placeData =
                         placeUseCase.getPlaces(query = searchText, rect = from(currentRect!!))
-                    updateUiStateData(placeItems = images)
+                    updateUiStateData(placeItems = placeData)
                 }
             } catch (e: Exception) {
+                Logger.d(e.toString())
                 updateState { MapViewState.Error("검색에 실패하였습니다.") }
             }
         }

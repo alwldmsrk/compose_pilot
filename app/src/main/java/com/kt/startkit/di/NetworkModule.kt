@@ -38,15 +38,6 @@ object NetworkModule {
             .build()
     }
 
-    //    @Provides
-//    fun provideRetrofit(): ApiService {
-//        return Retrofit.Builder()
-//            .baseUrl(ApiService.BASE_URL)
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//            .create(ApiService::class.java)
-//    }
-
     @Provides
     fun provideRetrofit(
         @BaseUrl baseUrl: String,

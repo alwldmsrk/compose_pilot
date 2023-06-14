@@ -8,15 +8,15 @@ data class PlaceResponse(
 data class Meta(
     val is_end: Boolean,
     val pageable_count: Int,
-    val same_name: SameName,
+    val same_name: SameName?,
     val total_count: Int
 
 )
 
 data class SameName(
-    val region: List<String>,    // 질의어에서 인식된 지역의 리스트 (예: '중앙로 맛집' 에서 '중앙로'에 해당하는 지역 리스트)
-    val keyword: String, // 질의어에서 지역 정보를 제외한 키워드 (예: '중앙로 맛집' 에서 '맛집')
-    val selected_region: String,    //인식된 지역 리스트 중 현재 검색에 사용된 지역 정보
+    val region: List<String>?,    // 질의어에서 인식된 지역의 리스트 (예: '중앙로 맛집' 에서 '중앙로'에 해당하는 지역 리스트)
+    val keyword: String?, // 질의어에서 지역 정보를 제외한 키워드 (예: '중앙로 맛집' 에서 '맛집')
+    val selected_region: String?,    //인식된 지역 리스트 중 현재 검색에 사용된 지역 정보
 )
 
 data class Document(
