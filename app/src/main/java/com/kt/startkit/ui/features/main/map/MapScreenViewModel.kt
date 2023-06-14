@@ -35,19 +35,6 @@ class MapScreenViewModel @Inject constructor(
 
     private var currentRect: CameraRect? = null
 
-//    private val placeItems = MutableStateFlow<List<PlaceData>>(emptyList())
-//    private val favorites = MutableStateFlow<List<FavoriteData>>(emptyList())
-//    private val uiDataStates = combine(
-//        placeItems,
-//        favorites,
-//        ::Pair
-//    ).map { (place, favorite) ->
-//        Logger.i("combine map test ")
-//        updateState { MapViewState.Data(placeItems = place, favorites = favorite) }
-//    }.stateIn(
-//        scope = viewModelScope
-//    )
-
     /**
      * 검색 장소와 관심 장소를 UIState.Data에 합쳐서 올려보낸다.
      */
@@ -131,7 +118,7 @@ class MapScreenViewModel @Inject constructor(
             is UiAction.AddFavoritePlace -> {
                 Logger.i("AddFavoritePlace Marker : $event")
                 viewModelScope.launch {
-                    favoriteUseCase.addFavorite(lat = event.lat, lng = event.lng, name = event.name, address = event.address)
+                    favoriteUseCase.addFavorite(lat = event.lat, lng = event.lng, name = event.name, address = event.address, url = event.url)
                 }
             }
 
@@ -197,6 +184,7 @@ sealed class UiAction {
         val lng: Double,
         val name: String,
         val address: String,
+        val url: String,
     ) : UiAction()
 
     data class RemoveFavoritePlace(val name: String) : UiAction()

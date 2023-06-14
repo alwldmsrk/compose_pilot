@@ -46,6 +46,7 @@ import com.kt.startkit.domain.entity.FavoriteData
 import com.kt.startkit.domain.entity.PlaceData
 import com.kt.startkit.ui.component.dialog.ShowDialog
 import com.kt.startkit.ui.features.main.map.component.PlaceSearchTextField
+import com.kt.startkit.ui.features.main.web.WebViewScreen
 
 @Composable
 fun MapScreen(
@@ -131,10 +132,10 @@ private fun GoogleMapScreen(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(yangjae, 13f)
     }
-    val clickedMarkerState = remember { mutableStateOf<Marker?>(null) }
+    val clickedMarkerState = remember { mutableStateOf<MarkerClickData?>(null) }
     val clickedMarker = clickedMarkerState.value
     if (clickedMarker != null) {
-        MarkerClickProcess(marker = clickedMarker, dismiss = { clickedMarkerState.value = null })
+        MarkerClickProcess(markerClickData = clickedMarker, dismiss = { clickedMarkerState.value = null })
     }
 
     CameraPositionChangeListen(
@@ -190,7 +191,7 @@ fun CameraPositionChangeListen(cameraPositionState: CameraPositionState, onChang
 }
 
 @Composable
-fun AddPlaceMarkers(placeDatas: List<PlaceData>, onClick: (Marker) -> Unit) {
+fun AddPlaceMarkers(placeDatas: List<PlaceData>, onClick: (MarkerClickData) -> Unit) {
     for (placeData in placeDatas) {
         Logger.i("placeData => y : ${placeData.y} x : ${placeData.x}, name = ${placeData.place_name}")
         Marker(
@@ -198,34 +199,38 @@ fun AddPlaceMarkers(placeDatas: List<PlaceData>, onClick: (Marker) -> Unit) {
             title = placeData.place_name,
             snippet = placeData.address_name,
             tag = MarkerType.PLACE.tag,
-            onInfoWindowClick = onClick
+            onInfoWindowClick = {
+                onClick(MarkerClickData.Place(placeData, it))
+            }
         )
     }
 }
 
 @Composable
-fun AddFavoriteMarkers(favoriteDatas: List<FavoriteData>, onClick: (Marker) -> Unit) {
+fun AddFavoriteMarkers(favoriteDatas: List<FavoriteData>, onClick: (MarkerClickData) -> Unit) {
     for (favoriteData in favoriteDatas) {
-        Logger.i("favoriteData => y : ${favoriteData.lat} x : ${favoriteData.lng}, name = ${favoriteData.name}")
+        Logger.i("favoriteData => y : ${favoriteData.lat} x : ${favoriteData.lng}, name = ${favoriteData.name}, url = ${favoriteData.url}")
         Marker(
             state = MarkerState(position = LatLng(favoriteData.lat, favoriteData.lng)),
             title = favoriteData.name,
             snippet = favoriteData.address,
             icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN),
             tag = MarkerType.FAVORITE.tag,
-            onInfoWindowClick = onClick
+            onInfoWindowClick = {
+                onClick(MarkerClickData.Favorite(favoriteData, it))
+            }
         )
     }
 }
 
 @Composable
 fun MarkerClickProcess(
-    marker: Marker,
+    markerClickData: MarkerClickData,
     dismiss: () -> Unit,
     viewModel: MapScreenViewModel = hiltViewModel()
 ) {
-    when (marker.tag) {
-        MarkerType.PLACE.tag -> {
+    when (markerClickData) {
+        is MarkerClickData.Place -> {
             ShowDialog(
                 onDismissRequest = {
                     dismiss()
@@ -233,27 +238,28 @@ fun MarkerClickProcess(
                 onButtonClick = {
                     viewModel.sendUiAction(
                         UiAction.AddFavoritePlace(
-                            lat = marker.position.latitude,
-                            lng = marker.position.longitude,
-                            name = marker.title ?: "",
-                            address = marker.snippet ?: "",
+                            lat = markerClickData.place.y.toDouble(),
+                            lng = markerClickData.place.x.toDouble(),
+                            name = markerClickData.place.place_name,
+                            address = markerClickData.place.address_name,
+                            url = markerClickData.place.place_url
                         )
                     )
-                    marker.isVisible = false
+                    markerClickData.marker.isVisible = false
                     dismiss()
                 },
                 contentText = "관심 장소에 추가하시겠습니까? "
             )
         }
 
-        MarkerType.FAVORITE.tag -> {
+        is MarkerClickData.Favorite -> {
             ShowDialog(
                 onDismissRequest = {
                     dismiss()
                 },
                 onButtonClick = {
                     viewModel.sendUiAction(
-                        UiAction.RemoveFavoritePlace(marker.title ?: "")
+                        UiAction.RemoveFavoritePlace(markerClickData.favorite.name)
                     )
                     dismiss()
                 },
@@ -263,6 +269,11 @@ fun MarkerClickProcess(
 
         else -> {}
     }
+}
+
+sealed class MarkerClickData {
+    data class Place(val place: PlaceData, val marker: Marker): MarkerClickData()
+    data class Favorite(val favorite: FavoriteData, val marker: Marker): MarkerClickData()
 }
 
 enum class MarkerType(val tag: String) {

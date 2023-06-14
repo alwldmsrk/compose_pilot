@@ -7,5 +7,7 @@ data class FavoriteData(
 
     val name: String,
 
-    val address: String
+    val address: String,
+
+    val url: String,
 )
