@@ -1,5 +1,9 @@
 package com.kt.startkit.data.datasource
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.kt.startkit.data.local.MapDatabase
 import com.kt.startkit.data.model.FavoriteModel
 import com.kt.startkit.data.model.PlaceResponse
@@ -9,8 +13,21 @@ import javax.inject.Inject
 class FavoriteDataSource @Inject constructor(
     private val mapDatabase: MapDatabase
 ) {
-    fun getFavoriteModels(): Flow<List<FavoriteModel>> {
+     fun getFavoriteModels(): Flow<List<FavoriteModel>> {
         return mapDatabase.favoriteDao().loadAllFavorites()
+    }
+
+    fun getFavoriteModelsWithPaging(): Flow<PagingData<FavoriteModel>> {
+        val pagingSourceFactory = { mapDatabase.favoriteDao().loadAllFavoritesWithPaging() }
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = false
+            ),
+            initialKey = null,
+            pagingSourceFactory = pagingSourceFactory
+        ).flow
+
     }
 
     suspend fun removeFavoriteModel(name: String) {

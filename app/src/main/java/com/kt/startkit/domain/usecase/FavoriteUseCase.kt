@@ -1,5 +1,7 @@
 package com.kt.startkit.domain.usecase
 
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.kt.startkit.data.datasource.FavoriteDataSource
 import com.kt.startkit.domain.entity.FavoriteData
 import com.kt.startkit.domain.mapper.FavoriteDomainMapper
@@ -16,11 +18,20 @@ class FavoriteUseCase @Inject constructor(
 
     fun getAllFavorites(): Flow<List<FavoriteData>> {
         return dataSource.getFavoriteModels()
-            .map {models ->
-                models.map{
+            .map { models ->
+                models.map {
                     domainMapper(it)
                 }
             }
+    }
+
+
+    fun getAllFavoritesWithPaging(): Flow<PagingData<FavoriteData>> {
+        return dataSource.getFavoriteModelsWithPaging().map { item ->
+            item.map {
+                domainMapper(it)
+            }
+        }
     }
 
     suspend fun removeFavorite(name: String) {
