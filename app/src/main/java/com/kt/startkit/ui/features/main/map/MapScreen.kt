@@ -46,6 +46,7 @@ import com.kt.startkit.domain.entity.FavoriteData
 import com.kt.startkit.domain.entity.PlaceData
 import com.kt.startkit.ui.component.dialog.ShowDialog
 import com.kt.startkit.ui.features.main.map.component.PlaceSearchTextField
+import com.kt.startkit.ui.features.main.web.WebViewScreen
 
 @Composable
 fun MapScreen(
