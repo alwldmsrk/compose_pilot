@@ -134,6 +134,10 @@ class MapScreenViewModel @Inject constructor(
                     favoriteUseCase.addFavorite(lat = event.lat, lng = event.lng, name = event.name, address = event.address)
                 }
             }
+
+            is UiAction.RemoveFavoritePlace -> {
+                viewModelScope.launch { favoriteUseCase.removeFavorite(event.name) }
+            }
         }
     }
 
@@ -149,7 +153,7 @@ class MapScreenViewModel @Inject constructor(
                 if (currentRect != null) {
                     val images =
                         placeUseCase.getPlaces(query = searchText, rect = from(currentRect!!))
-                    updateState { MapViewState.Data(images, emptyList()) }
+                    updateUiStateData(placeItems = images)
                 }
             } catch (e: Exception) {
                 updateState { MapViewState.Error("검색에 실패하였습니다.") }
@@ -194,5 +198,7 @@ sealed class UiAction {
         val name: String,
         val address: String,
     ) : UiAction()
+
+    data class RemoveFavoritePlace(val name: String) : UiAction()
 }
 
