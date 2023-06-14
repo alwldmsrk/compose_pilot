@@ -14,7 +14,7 @@ class FavoriteUseCase @Inject constructor(
     private val domainMapper: FavoriteDomainMapper
 ) : Usecase {
 
-    suspend fun getAllFavorites(): Flow<List<FavoriteData>> {
+    fun getAllFavorites(): Flow<List<FavoriteData>> {
         return dataSource.getFavoriteModels()
             .map {models ->
                 models.map{

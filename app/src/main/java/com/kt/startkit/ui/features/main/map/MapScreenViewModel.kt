@@ -1,6 +1,7 @@
 package com.kt.startkit.ui.features.main.map
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.datastore.dataStore
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kt.startkit.core.base.StateViewModel
@@ -89,7 +90,7 @@ class MapScreenViewModel @Inject constructor(
         }
     }
 
-    suspend fun initUiState() {
+    private suspend fun initUiState() {
         updateState { MapViewState.Loading }
         try {
             updateUiStateData(placeItems = emptyList())
@@ -100,7 +101,7 @@ class MapScreenViewModel @Inject constructor(
 
     private suspend fun loadFavoriteItems() {
         favoriteUseCase.getAllFavorites()
-            .collect{favorites ->
+            .collect { favorites ->
                 updateUiStateData(favoriteItems = favorites)
             }
     }
@@ -125,6 +126,13 @@ class MapScreenViewModel @Inject constructor(
 
             is UiAction.SearchPlace -> {
                 requestSearchPlace(MapViewState.Initial)
+            }
+
+            is UiAction.AddFavoritePlace -> {
+                Logger.i("AddFavoritePlace Marker : $event")
+                viewModelScope.launch {
+                    favoriteUseCase.addFavorite(lat = event.lat, lng = event.lng, name = event.name, address = event.address)
+                }
             }
         }
     }
@@ -180,5 +188,11 @@ sealed class UiAction {
     ) : UiAction()
 
     object SearchPlace : UiAction()
+    data class AddFavoritePlace(
+        val lat: Double,
+        val lng: Double,
+        val name: String,
+        val address: String,
+    ) : UiAction()
 }
 

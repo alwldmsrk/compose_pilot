@@ -9,7 +9,7 @@ import javax.inject.Inject
 class FavoriteDataSource @Inject constructor(
     private val mapDatabase: MapDatabase
 ) {
-    suspend fun getFavoriteModels(): Flow<List<FavoriteModel>> {
+    fun getFavoriteModels(): Flow<List<FavoriteModel>> {
         return mapDatabase.favoriteDao().loadAllFavorites()
     }
 
