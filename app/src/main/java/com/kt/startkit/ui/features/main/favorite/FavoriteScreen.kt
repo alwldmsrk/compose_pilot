@@ -22,9 +22,10 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.kt.startkit.R
 import com.kt.startkit.domain.entity.FavoriteData
+import com.kt.startkit.ui.features.main.LocalNavigationProvider
 import com.kt.startkit.ui.features.main.favorite.component.PlaceColumnContent
 import com.kt.startkit.ui.features.main.favorite.component.ResultDataItem
-import com.kt.startkit.ui.features.main.map.MapViewState
+import com.kt.startkit.ui.features.main.root.NavigationRoute
 
 
 @Composable
@@ -84,6 +85,8 @@ fun FavoriteListWithPaging(
     listData: LazyPagingItems<FavoriteData>,
     viewModel: FavoriteScreenViewModel = hiltViewModel()
 ) {
+    val navController = LocalNavigationProvider.current
+
     LazyColumn(
         modifier = Modifier
             .padding(vertical = 30.dp)
@@ -93,6 +96,11 @@ fun FavoriteListWithPaging(
         items(listData) { item ->
             if(item != null){
                 ResultDataItem(
+                    //TODO onClickItem에 url 값 넣어주기
+                    onClickItem = {
+                        val url = item.url
+                        navController.navigate("/favorite?url=$url")
+                    },
                     bookMarkIcon = R.drawable.outline_favorite_black_24,
                     onClickBookmark = {
                         viewModel.sendUiAction(FavoriteScreenViewModel.UiAction.DeleteBookmark(item.name))
@@ -107,38 +115,6 @@ fun FavoriteListWithPaging(
             }
         }
     }
-
-    /**
-     * 즐겨찾기 리스트 표출 Composable
-     */
-    /*@Composable
-    fun FavoriteList(
-        listData: FavoriteViewState.Data,
-        viewModel: FavoriteScreenViewModel = hiltViewModel()
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .padding(vertical = 30.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-
-            items(listData.favoriteItem) {
-                ResultDataItem(
-                    bookMarkIcon = R.drawable.outline_favorite_black_24,
-                    onClickBookmark = {
-    //                    viewModel.sendUiAction(FavoriteScreenViewModel.UiAction.DeleteBookmark(item.name))
-                    },
-                    columnContent = {
-                        PlaceColumnContent(
-                            title = it.name,
-                            address = it.address
-                        )
-                    }
-                )
-            }
-        }
-    }*/
 
 }
 

@@ -59,7 +59,6 @@ fun RootScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootContentView() {
     val navController = LocalNavigationProvider.current
@@ -77,7 +76,6 @@ fun RootContentView() {
             Modifier
                 .fillMaxSize()
                 .padding(padding)
-//                .consumeWindowInsets(padding)
                 .windowInsetsPadding(
                     WindowInsets.safeDrawing.only(
                         WindowInsetsSides.Horizontal,
