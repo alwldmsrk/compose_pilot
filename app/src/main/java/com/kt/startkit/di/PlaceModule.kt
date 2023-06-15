@@ -27,7 +27,6 @@ object PlaceModule {
     }
 
     @Provides
-    @Singleton
     fun providePlaceRepository(
         dataSource: PlaceDataSource,
         domainMapper: PlaceDomainMapper

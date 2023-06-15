@@ -99,7 +99,7 @@ fun FavoriteListWithPaging(
                     //TODO onClickItem에 url 값 넣어주기
                     onClickItem = {
                         val url = item.url
-                        navController.navigate("/favorite?url=$url")
+                        navController.navigate("/detail?url=$url")
                     },
                     bookMarkIcon = R.drawable.outline_favorite_black_24,
                     onClickBookmark = {

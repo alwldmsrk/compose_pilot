@@ -20,7 +20,7 @@ const val DETAIL_ARGUMENT_KEY = "url"
 enum class NavigationRoute(val routeName: String) {
     MAP("/map_screen"),
     FAVORITE("/favorite"),
-    FAVORITE_PLACE_URL("/favorite?url={$DETAIL_ARGUMENT_KEY}"),
+    FAVORITE_PLACE_URL("/detail?url={$DETAIL_ARGUMENT_KEY}"),
 }
 
 @Composable
